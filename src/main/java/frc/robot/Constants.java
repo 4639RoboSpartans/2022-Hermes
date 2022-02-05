@@ -33,6 +33,8 @@ public final class Constants {
 	public static final int rightForwardPiston=3;
 	public static final int rightBackwardPiston=4;
 
+	public static final int feederSensor=1;
+
 
 	public static final double ksVolts=0;
 	public static final double kvVoltSecondsPerMeter = 0;
