@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
-    private WPI_VictorSPX leftClimberMotor = new WPI_VictorSPX(Constants.LClimberMotor),
-                          rightClimberMotor = new WPI_VictorSPX(Constants.RClimberMotor);
+    private WPI_VictorSPX leftClimberMotor = new WPI_VictorSPX(Constants.LClimberMotor);
+    private WPI_VictorSPX rightClimberMotor = new WPI_VictorSPX(Constants.RClimberMotor);
 
     public ClimberSubsystem(){
         leftClimberMotor.configFactoryDefault();
