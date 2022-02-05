@@ -26,6 +26,7 @@ public final class Constants {
 	public static final int ShroudMotor=9;
 	public static final int LClimberMotor=10;
 	public static final int RClimberMotor=11;
+	public static final int HopperMotor=12;
 
 	public static final int leftForwardPiston= 1;
 	public static final int leftBackwardPiston =2;
