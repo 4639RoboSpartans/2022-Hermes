@@ -21,8 +21,9 @@ public final class Constants {
 	public static final int FeedMotor=6;
 	public static final int TurretMotor=7;
 	public static final int ShooterMotor=8;
-	public static final int LClimberMotor=9;
-	public static final int RClimberMotor=10;
+	public static final int ShroudMotor=9;
+	public static final int LClimberMotor=10;
+	public static final int RClimberMotor=11;
 
     public static final double DEADZONE_VALUE = 0.01;
 	public static final int NUMBER_OF_CONTROLLERS = 2;
