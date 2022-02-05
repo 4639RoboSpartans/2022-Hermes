@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ClimberSubsystem {
+public class ClimberSubsystem extends SubsystemBase {
     private WPI_VictorSPX leftClimberMotor = new WPI_VictorSPX(Constants.LClimberMotor),
                           rightClimberMotor = new WPI_VictorSPX(Constants.RClimberMotor);
 
