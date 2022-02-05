@@ -17,11 +17,13 @@ public class ClimberSubsystem {
         leftClimberMotor.setNeutralMode(NeutralMode.Brake);
         rightClimberMotor.setNeutralMode(NeutralMode.Brake);
     }
-    public setClimber(double leftSpeed, double rightSpeed){
+
+    public void setClimber(double leftSpeed, double rightSpeed){
         leftClimberMotor.set(leftSpeed);
         rightClimberMotor.set(rightSpeed);
     }
-    public stopClimber(){
+
+    public void stopClimber(){
         leftClimberMotor.set(0);
         rightClimberMotor.set(0);
     }
