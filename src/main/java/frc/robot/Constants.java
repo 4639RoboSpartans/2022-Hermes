@@ -36,15 +36,15 @@ public final class Constants {
 	public static final int feederSensor=1;
 
 
-	public static final double ksVolts=0;
-	public static final double kvVoltSecondsPerMeter = 0;
-    public static final double kaVoltSecondsSquaredPerMeter = 0;
-	public static final double kPDriveVel = 0;
-	public static final double kTrackwidthMeters = 0;
+	public static final double ksVolts=0.55998;
+	public static final double kvVoltSecondsPerMeter = 0.028213;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0027958;
+	public static final double kPDriveVel = 0.12602;
+	public static final double kTrackwidthMeters = 0.665;
     public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthMeters);
-	public static final double kMaxSpeedMetersPerSecond = 0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0;
+	public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
 	public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
 
