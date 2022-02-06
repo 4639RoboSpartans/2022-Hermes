@@ -14,8 +14,7 @@ public class DriveSubsystem extends SubsystemBase{
     private WPI_TalonFX BackLeft = new WPI_TalonFX(Constants.DriveMotorBackLeft);
     private WPI_TalonFX FrontRight = new WPI_TalonFX(Constants.DriveMotorFrontRight);
     private WPI_TalonFX BackRight = new WPI_TalonFX(Constants.DriveMotorBackRight);
-    private AHRS navx = new AHRS();
-    private double[] start1 = {0,0,0};
+    private AHRS navx = new AHRS();//0.665 m track width
     private DifferentialDrive m_drive;
     
     public DriveSubsystem(){
@@ -41,10 +40,10 @@ public class DriveSubsystem extends SubsystemBase{
         m_drive.setSafetyEnabled(false);
     }
 
-    public double getRawXDisplacement(){
+    public double getXDisplacement(){
         return navx.getDisplacementX();
     }
-    public double getRawYDisplacement(){
+    public double getYDisplacement(){
         return navx.getDisplacementZ();
     }
     public void arcadeDrive(double speed, double rotation){

@@ -3,6 +3,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.ShroudSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -11,6 +12,7 @@ public class VisionAimCommand extends CommandBase {
     private LimeLightSubsystem LL = new LimeLightSubsystem();
     private TurretSubsystem m_turret = new TurretSubsystem();
     private ShroudSubsystem m_shroud = new ShroudSubsystem();
+    private DriveSubsystem m_drive = new DriveSubsystem();
     PIDController PIDVTurret = new PIDController(0, 0, 0);
     PIDController PIDVShroud = new PIDController(0, 0, 0);
     PIDController PIDETurret = new PIDController(0, 0, 0);
@@ -34,6 +36,7 @@ public class VisionAimCommand extends CommandBase {
             m_shroud.setShroud(PIDVShroud.calculate(LL.targety(),0));
         }else{
             //put tracking code here
+            
         }
     }
     @Override
