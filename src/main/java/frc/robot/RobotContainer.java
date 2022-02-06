@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ClimberBackwardCommand;
 import frc.robot.commands.ClimberForwardCommand;
 import frc.robot.commands.DriveCommand;

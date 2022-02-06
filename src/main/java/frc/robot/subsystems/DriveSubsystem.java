@@ -3,9 +3,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,6 +14,8 @@ public class DriveSubsystem extends SubsystemBase{
     private WPI_TalonFX BackLeft = new WPI_TalonFX(Constants.DriveMotorBackLeft);
     private WPI_TalonFX FrontRight = new WPI_TalonFX(Constants.DriveMotorFrontRight);
     private WPI_TalonFX BackRight = new WPI_TalonFX(Constants.DriveMotorBackRight);
+    private AHRS navx = new AHRS();
+    private double[] start1 = {0,0,0};
     private DifferentialDrive m_drive;
     
     public DriveSubsystem(){
@@ -39,21 +41,27 @@ public class DriveSubsystem extends SubsystemBase{
         m_drive.setSafetyEnabled(false);
     }
 
+    public double getRawXDisplacement(){
+        return navx.getDisplacementX();
+    }
+    public double getRawYDisplacement(){
+        return navx.getDisplacementZ();
+    }
     public void arcadeDrive(double speed, double rotation){
         m_drive.arcadeDrive(speed, rotation);
     }
-
+//13 to 50, 24 to 50
     public double getLeftEncoderPosition(){
-        return (FrontLeft.getSelectedSensorPosition()+BackLeft.getSelectedSensorPosition())/2; 
+        return ((FrontLeft.getSelectedSensorPosition()+BackLeft.getSelectedSensorPosition())/2)*(13.0/50.0)*(24.0*50.0)*(Math.PI*0.1524); 
     }
     public double getRightEncoderPosition(){
-        return (FrontRight.getSelectedSensorPosition()+BackRight.getSelectedSensorPosition())/2; 
+        return ((FrontRight.getSelectedSensorPosition()+BackRight.getSelectedSensorPosition())/2)*(13.0/50.0)*(24.0*50.0)*(Math.PI*0.1524); 
     }
     public double getLeftEncoderRate(){
-        return (FrontLeft.getSelectedSensorVelocity()+BackLeft.getSelectedSensorVelocity())/2; 
+        return ((FrontLeft.getSelectedSensorVelocity()+BackLeft.getSelectedSensorVelocity())/2)*(13.0/50.0)*(24.0*50.0)*(Math.PI*0.1524); 
     }
     public double getRightEncoderRate(){
-        return (FrontRight.getSelectedSensorVelocity()+BackRight.getSelectedSensorVelocity())/2; 
+        return ((FrontRight.getSelectedSensorVelocity()+BackRight.getSelectedSensorVelocity())/2)*(13.0/50.0)*(24.0*50.0)*(Math.PI*0.1524); 
     }
     public void stop(){
         m_drive.stopMotor();
