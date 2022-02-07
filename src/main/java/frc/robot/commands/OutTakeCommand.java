@@ -6,10 +6,13 @@ import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class OutTakeCommand extends CommandBase{
-    private IntakeSubsystem m_intake = new IntakeSubsystem();
-    private HopperSubsystem m_hopper = new HopperSubsystem();
-    private FeederSubsystem m_feeder = new FeederSubsystem();
-    public OutTakeCommand(){
+    private IntakeSubsystem m_intake ;
+    private HopperSubsystem m_hopper;
+    private FeederSubsystem m_feeder ;
+    public OutTakeCommand(IntakeSubsystem m_intake, HopperSubsystem m_hopper, FeederSubsystem m_feeder){
+        this.m_intake=m_intake;
+        this.m_hopper =m_hopper;
+        this.m_feeder =m_feeder;
         addRequirements(m_intake, m_hopper, m_feeder);
     }
     @Override

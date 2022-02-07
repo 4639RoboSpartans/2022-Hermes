@@ -39,7 +39,9 @@ public class DriveSubsystem extends SubsystemBase{
         m_drive = new DifferentialDrive(FrontLeft, FrontRight);
         m_drive.setSafetyEnabled(false);
     }
-
+    public AHRS getNavx(){
+        return navx;
+    }
     public double getXDisplacement(){
         return navx.getDisplacementX();
     }

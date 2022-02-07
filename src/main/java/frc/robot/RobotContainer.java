@@ -11,14 +11,40 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.OutTakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.VisionAimCommand;
+import frc.robot.commands.AutonomousRoutines.Path1;
+import frc.robot.commands.AutonomousRoutines.Path2;
+import frc.robot.commands.AutonomousRoutines.Path3;
+import frc.robot.commands.AutonomousRoutines.Path4;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShroudSubsystem;
+import frc.robot.subsystems.TurretSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public class RobotContainer {
   public DriveSubsystem m_drive = new DriveSubsystem();
   public IntakeSubsystem m_intake = new IntakeSubsystem();
+  public ClimberSubsystem m_climber = new ClimberSubsystem();
+  public FeederSubsystem m_feeder = new FeederSubsystem();
+  public HopperSubsystem m_hopper = new HopperSubsystem();
+  public LimeLightSubsystem m_LL = new LimeLightSubsystem();
+  public ShooterSubsystem m_shooter = new ShooterSubsystem();
+  public ShroudSubsystem m_shroud = new ShroudSubsystem();
+  public TurretSubsystem m_turret = new TurretSubsystem();
+
+  public Path1 m_path1 = new Path1();
+  public Path2 m_path2 = new Path2();
+  public Path3 m_path3 = new Path3();
+  public Path4 m_path4 = new Path4();
+  
+  public SendableChooser <Command> m_chooser = new SendableChooser<>();
   public OI m_oi = new OI();
 
   public RobotContainer() {
@@ -30,15 +56,15 @@ public class RobotContainer {
     m_drive.setDefaultCommand(new DriveCommand(m_drive, m_oi));
     m_oi.getPovButton(1, 0).whileHeld(new RunCommand(() -> m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 180).whileHeld(new RunCommand(() -> m_intake.retractPistons(), m_intake));
-    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new IntakeCommand());
-    m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(new OutTakeCommand());
-    m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new VisionAimCommand());
-    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(new ShooterCommand());
-    m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(new ClimberForwardCommand());
-    m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(new ClimberBackwardCommand());
+    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new IntakeCommand(m_intake, m_hopper, m_feeder));
+    m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(new OutTakeCommand(m_intake, m_hopper, m_feeder));
+    m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new VisionAimCommand(m_LL, m_turret, m_shroud, m_drive));
+    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(new ShooterCommand(m_shooter, m_feeder, m_LL));
+    m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(new ClimberForwardCommand(m_climber));
+    m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(new ClimberBackwardCommand(m_climber));
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    return m_chooser.getSelected();
   }
 }

@@ -8,12 +8,15 @@ import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterCommand extends CommandBase{
-    private ShooterSubsystem m_shooter = new ShooterSubsystem();
-    private FeederSubsystem m_feeder = new FeederSubsystem();
-    private LimeLightSubsystem LL = new LimeLightSubsystem();
+    private ShooterSubsystem m_shooter ;
+    private FeederSubsystem m_feeder ;
+    private LimeLightSubsystem LL ;
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0, 0);
     private BangBangController shooterBang = new BangBangController(100);
-    public ShooterCommand(){
+    public ShooterCommand(ShooterSubsystem m_shooter, FeederSubsystem m_feeder, LimeLightSubsystem LL){
+        this.m_shooter = m_shooter;
+        this.m_feeder = m_feeder;
+        this.LL = LL;
         addRequirements(m_shooter,m_feeder, LL);
     }
     public double calculate(){

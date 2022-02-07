@@ -4,9 +4,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class ClimberBackwardCommand extends CommandBase{
-    private ClimberSubsystem m_climber = new ClimberSubsystem();
+    private ClimberSubsystem m_climber ;
 
-    public ClimberBackwardCommand(){
+    public ClimberBackwardCommand(ClimberSubsystem m_climber){
+        this.m_climber = m_climber;
         addRequirements(m_climber);
     }
 
