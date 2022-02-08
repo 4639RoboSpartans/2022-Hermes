@@ -35,16 +35,18 @@ public final class Constants {
 
 	public static final int feederSensor=1;
 
+	//Subject to change
+	public static final double ksVolts=0.66099;
+	public static final double kvVoltSecondsPerMeter = 0.026728;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0028603;
+	public static final double kPDriveVel = 0.12992;
+	//Subject to change
 
-	public static final double ksVolts=0.55998;
-	public static final double kvVoltSecondsPerMeter = 0.028213;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0027958;
-	public static final double kPDriveVel = 0.12602;
 	public static final double kTrackwidthMeters = 0.665;
     public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthMeters);
-	public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+	public static final double kMaxSpeedMetersPerSecond = 3.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
 	public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
 
@@ -55,10 +57,10 @@ public final class Constants {
     public static final double DEADZONE_VALUE = 0.01;
 	public static final int NUMBER_OF_CONTROLLERS = 2;
 
-	public static final double ROTATION_SENSITIVITY = 0.8;//0.75
+	public static final double ROTATION_SENSITIVITY = 0.7;//0.75
     
     public enum Axes {
-		LEFT_STICK_X(0), LEFT_STICK_Y(1), LEFT_TRIGGER(2), RIGHT_TRIGGER(3), RIGHT_STICK_X(4), RIGHT_STICK_Y(5);
+		LEFT_STICK_X(0), LEFT_STICK_Y(4), LEFT_TRIGGER(2), RIGHT_TRIGGER(3), RIGHT_STICK_X(1), RIGHT_STICK_Y(5);
 
 		private final int value;
 

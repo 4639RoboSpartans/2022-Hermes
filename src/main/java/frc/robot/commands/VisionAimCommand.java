@@ -13,6 +13,7 @@ public class VisionAimCommand extends CommandBase {
     private TurretSubsystem m_turret;
     private ShroudSubsystem m_shroud;
     private DriveSubsystem m_drive;
+    //add feedforward mechanism!!!!!!!!
     PIDController PIDVTurret = new PIDController(0, 0, 0);
     PIDController PIDVShroud = new PIDController(0, 0, 0);
     PIDController PIDETurret = new PIDController(0, 0, 0);

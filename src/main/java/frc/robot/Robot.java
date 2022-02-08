@@ -4,6 +4,13 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,11 +37,17 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    String trajectoryJSON = "paths/Unnamed.wpilib.json";
+Trajectory trajectory = new Trajectory();
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      m_robotContainer.traj = trajectory;
+   } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+   }
     
-    m_robotContainer.m_chooser.setDefaultOption("Path1", m_robotContainer.m_path1);
-    m_robotContainer.m_chooser.addOption("Path2", m_robotContainer.m_path2);
-    m_robotContainer.m_chooser.addOption("Path3", m_robotContainer.m_path3);
-    m_robotContainer.m_chooser.addOption("Path4", m_robotContainer.m_path4);
+
   }
 
   /**
@@ -50,6 +63,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+  
     CommandScheduler.getInstance().run();
   }
 
@@ -64,7 +78,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_robotContainer.m_drive.resetEncoders();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -85,11 +99,14 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.m_drive.getNavx().resetDisplacement();
+    m_robotContainer.m_drive.resetEncoders();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("leftEncoder", m_robotContainer.m_drive.getLeftEncoderPosition());
+    SmartDashboard.putNumber("rightEncoder", m_robotContainer.m_drive.getRightEncoderPosition());
     SmartDashboard.putNumber("X displacement", m_robotContainer.m_drive.getNavx().getDisplacementX());
     SmartDashboard.putNumber("Z displacement", m_robotContainer.m_drive.getNavx().getDisplacementZ());
   }
