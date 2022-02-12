@@ -11,10 +11,6 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.OutTakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.VisionAimCommand;
-import frc.robot.commands.AutonomousRoutines.Path1;
-import frc.robot.commands.AutonomousRoutines.Path2;
-import frc.robot.commands.AutonomousRoutines.Path3;
-import frc.robot.commands.AutonomousRoutines.Path4;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -25,6 +21,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShroudSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -36,14 +34,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public class RobotContainer {
-  public Trajectory traj;
   public DriveSubsystem m_drive = new DriveSubsystem();
   // public IntakeSubsystem m_intake = new IntakeSubsystem();
   // public ClimberSubsystem m_climber = new ClimberSubsystem();
@@ -54,23 +54,18 @@ public class RobotContainer {
   // public ShroudSubsystem m_shroud = new ShroudSubsystem();
   // public TurretSubsystem m_turret = new TurretSubsystem();
 
-  // public Path1 m_path1 = new Path1(m_drive, m_intake, m_hopper, m_feeder,
-  // m_turret, m_LL, m_shooter);
-  // public Path2 m_path2 = new Path2(m_drive, m_intake, m_hopper, m_feeder,
-  // m_turret, m_LL, m_shooter);
-  // public Path3 m_path3 = new Path3(m_drive, m_intake, m_hopper, m_feeder,
-  // m_turret, m_LL, m_shooter);
-  // public Path4 m_path4 = new Path4(m_drive, m_intake, m_hopper, m_feeder,
-  // m_turret, m_LL, m_shooter);
-
   public SendableChooser<Command> m_chooser = new SendableChooser<>();
   public OI m_oi = new OI();
-
+  private String path11;
+  Trajectory traj = new Trajectory();
   public RobotContainer() {
-    // m_chooser.setDefaultOption("Path1", m_path1);
-    // m_chooser.addOption("Path2", m_path2);
-    // m_chooser.addOption("Path3", m_path3);
-    // m_chooser.addOption("Path4", m_path4);
+    path11 = "paths/part1.wpilib.json";
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path11);
+      traj = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+   } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory: " + path11, ex.getStackTrace());
+   }
     configureButtonBindings();
   }
 
@@ -95,48 +90,44 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        traj,
+        m_drive::getPose,
+        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
         new SimpleMotorFeedforward(
             Constants.ksVolts,
             Constants.kvVoltSecondsPerMeter,
             Constants.kaVoltSecondsSquaredPerMeter),
         Constants.kDriveKinematics,
-        10);
-    TrajectoryConfig config = new TrajectoryConfig(
-        Constants.kMaxSpeedMetersPerSecond,
-        Constants.kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(Constants.kDriveKinematics)
-            .addConstraint(autoVoltageConstraint);
-    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(4,0), new Translation2d(4,4), new Translation2d(0,4)),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(0,0 , new Rotation2d(0)),
-    //     // Pass config
-    //     config);
-        
-        RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            traj,
-            m_drive::getPose,
-            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            m_drive::getWheelSpeeds,
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            // RamseteCommand passes volts to the callback
-            m_drive::tankDriveVolts,
-            m_drive);
-            m_drive.resetOdometry(traj.getInitialPose());
-
-            // Run path following command, then stop at the end.
-            return ramseteCommand.andThen(() -> m_drive.tankDriveVolts(0, 0));
-    // return m_chooser.getSelected();
+        m_drive::getWheelSpeeds,
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        m_drive::tankDriveVolts,
+        m_drive);
+    m_drive.resetOdometry(traj.getInitialPose());
+    return ramseteCommand.andThen(() -> m_drive.tankDriveVolts(0, 0));
   }
 }
+
+// var autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+// new SimpleMotorFeedforward(
+// Constants.ksVolts,
+// Constants.kvVoltSecondsPerMeter,
+// Constants.kaVoltSecondsSquaredPerMeter),
+// Constants.kDriveKinematics,
+// 10);
+// // TrajectoryConfig config = new TrajectoryConfig(
+// Constants.kMaxSpeedMetersPerSecond,
+// Constants.kMaxAccelerationMetersPerSecondSquared)
+// .setKinematics(Constants.kDriveKinematics)
+// .addConstraint(autoVoltageConstraint);
+// Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+// // Start at the origin facing the +X direction
+// new Pose2d(0, 0, new Rotation2d(0)),
+// // Pass through these two interior waypoints, making an 's' curve path
+// List.of(new Translation2d(4,0), new Translation2d(4,4), new
+// Translation2d(0,4)),
+// // End 3 meters straight ahead of where we started, facing forward
+// new Pose2d(0,0 , new Rotation2d(0)),
+// // Pass config
+// config);

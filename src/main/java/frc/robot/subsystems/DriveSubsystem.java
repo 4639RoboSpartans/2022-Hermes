@@ -114,7 +114,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void arcadeDrive(double speed, double rotation) {
         m_drive.arcadeDrive(speed, rotation);
     }
-
+    //change distance per rotation for more accurate path.
     // 13 to 50, 24 to 50
     public double getLeftEncoderPosition() {
         return ((FrontLeft.getSelectedSensorPosition() + BackLeft.getSelectedSensorPosition()) / 2)*(0.4788/2048)*(312.0/2500);
