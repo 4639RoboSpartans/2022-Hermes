@@ -58,21 +58,16 @@ public class RobotContainer {
   public OI m_oi = new OI();
   private String path31;
   private String path32;
-  private String path33;
   Trajectory traj = new Trajectory();
   Trajectory traj2 = new Trajectory();
-  Trajectory traj3 = new Trajectory();
   public RobotContainer() {
     path31 = "paths/path3part1.wpilib.json";
     path32 = "paths/path3part2.wpilib.json";
-    path33 = "paths/path3part3.wpilib.json";
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path31);
       Path trajectoryPath2 = Filesystem.getDeployDirectory().toPath().resolve(path32);
-      Path trajectoryPath3 = Filesystem.getDeployDirectory().toPath().resolve(path33);
       traj = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
       traj2 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
-      traj3 = TrajectoryUtil.fromPathweaverJson(trajectoryPath3);
    } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
    }
@@ -132,24 +127,10 @@ public class RobotContainer {
         m_drive);
     m_drive.resetOdometry(traj.getInitialPose());
 
-    RamseteCommand ramseteCommand3 = new RamseteCommand(
-      traj3,
-      m_drive::getPose,
-      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-      new SimpleMotorFeedforward(
-          Constants.ksVolts,
-          Constants.kvVoltSecondsPerMeter,
-          Constants.kaVoltSecondsSquaredPerMeter),
-      Constants.kDriveKinematics,
-      m_drive::getWheelSpeeds,
-      new PIDController(Constants.kPDriveVel, 0, 0),
-      new PIDController(Constants.kPDriveVel, 0, 0),
-      m_drive::tankDriveVolts,
-      m_drive);
-  m_drive.resetOdometry(traj.getInitialPose());
+    
+    
     return ramseteCommand.andThen(() -> m_drive.tankDriveVolts(0, 0))
-    .andThen(ramseteCommand2.andThen(() -> m_drive.tankDriveVolts(0, 0)))
-    .andThen(ramseteCommand3.andThen(() -> m_drive.tankDriveVolts(0, 0)));
+    .andThen(ramseteCommand2.andThen(() -> m_drive.tankDriveVolts(0, 0)));
   }
 }
 
