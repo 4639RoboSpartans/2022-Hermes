@@ -45,10 +45,10 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 
 public class RobotContainer {
   public DriveSubsystem m_drive = new DriveSubsystem();
-  // public IntakeSubsystem m_intake = new IntakeSubsystem();
+  public IntakeSubsystem m_intake = new IntakeSubsystem();
   // public ClimberSubsystem m_climber = new ClimberSubsystem();
-  // public FeederSubsystem m_feeder = new FeederSubsystem();
-  // public HopperSubsystem m_hopper = new HopperSubsystem();
+  public FeederSubsystem m_feeder = new FeederSubsystem();
+  public HopperSubsystem m_hopper = new HopperSubsystem();
   // public LimeLightSubsystem m_LL = new LimeLightSubsystem();
   // public ShooterSubsystem m_shooter = new ShooterSubsystem();
   // public ShroudSubsystem m_shroud = new ShroudSubsystem();
@@ -56,15 +56,25 @@ public class RobotContainer {
 
   public SendableChooser<Command> m_chooser = new SendableChooser<>();
   public OI m_oi = new OI();
-  private String path11;
+  private String path31;
+  private String path32;
+  private String path33;
   Trajectory traj = new Trajectory();
+  Trajectory traj2 = new Trajectory();
+  Trajectory traj3 = new Trajectory();
   public RobotContainer() {
-    path11 = "paths/part1.wpilib.json";
+    path31 = "paths/path3part1.wpilib.json";
+    path32 = "paths/path3part2.wpilib.json";
+    path33 = "paths/path3part3.wpilib.json";
     try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path11);
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path31);
+      Path trajectoryPath2 = Filesystem.getDeployDirectory().toPath().resolve(path32);
+      Path trajectoryPath3 = Filesystem.getDeployDirectory().toPath().resolve(path33);
       traj = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      traj2 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
+      traj3 = TrajectoryUtil.fromPathweaverJson(trajectoryPath3);
    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + path11, ex.getStackTrace());
+      DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
    }
     configureButtonBindings();
   }
@@ -75,8 +85,8 @@ public class RobotContainer {
     // m_intake.extendPistons(), m_intake));
     // m_oi.getPovButton(1, 180).whileHeld(new RunCommand(() ->
     // m_intake.retractPistons(), m_intake));
-    // m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new
-    // IntakeCommand(m_intake, m_hopper, m_feeder));
+    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new
+    IntakeCommand(m_intake, m_hopper, m_feeder));
     // m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(new
     // OutTakeCommand(m_intake, m_hopper, m_feeder));
     // m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new
@@ -105,7 +115,41 @@ public class RobotContainer {
         m_drive::tankDriveVolts,
         m_drive);
     m_drive.resetOdometry(traj.getInitialPose());
-    return ramseteCommand.andThen(() -> m_drive.tankDriveVolts(0, 0));
+
+    RamseteCommand ramseteCommand2 = new RamseteCommand(
+        traj2,
+        m_drive::getPose,
+        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+        new SimpleMotorFeedforward(
+            Constants.ksVolts,
+            Constants.kvVoltSecondsPerMeter,
+            Constants.kaVoltSecondsSquaredPerMeter),
+        Constants.kDriveKinematics,
+        m_drive::getWheelSpeeds,
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        m_drive::tankDriveVolts,
+        m_drive);
+    m_drive.resetOdometry(traj.getInitialPose());
+
+    RamseteCommand ramseteCommand3 = new RamseteCommand(
+      traj3,
+      m_drive::getPose,
+      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+      new SimpleMotorFeedforward(
+          Constants.ksVolts,
+          Constants.kvVoltSecondsPerMeter,
+          Constants.kaVoltSecondsSquaredPerMeter),
+      Constants.kDriveKinematics,
+      m_drive::getWheelSpeeds,
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      m_drive::tankDriveVolts,
+      m_drive);
+  m_drive.resetOdometry(traj.getInitialPose());
+    return ramseteCommand.andThen(() -> m_drive.tankDriveVolts(0, 0))
+    .andThen(ramseteCommand2.andThen(() -> m_drive.tankDriveVolts(0, 0)))
+    .andThen(ramseteCommand3.andThen(() -> m_drive.tankDriveVolts(0, 0)));
   }
 }
 
