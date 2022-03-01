@@ -23,9 +23,9 @@ public class OutTakeCommand extends CommandBase{
     }
     @Override
     public void execute(){
-        m_intake.setIntake(-0.5);
-        m_hopper.setHopper(-0.5);
-        m_feeder.setFeeder(-0.5);
+        m_intake.setIntake(-0.4);
+        m_hopper.setHopper(-0.4);
+        m_feeder.setFeeder(-0.4);
     }
     @Override
     public void end(boolean Interrupted){

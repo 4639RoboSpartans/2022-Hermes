@@ -14,7 +14,7 @@ public class HopperSubsystem extends SubsystemBase {
     }
 
     public void setHopper(double speed){
-        hopperMotor.set(speed);
+        hopperMotor.set(-speed);
     }
     
     public void stopHopper(){

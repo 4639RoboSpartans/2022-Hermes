@@ -61,6 +61,9 @@ public class DriveSubsystem extends SubsystemBase {
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
     }
+    public DifferentialDriveWheelSpeeds getWheelSpeeds2() {
+        return new DifferentialDriveWheelSpeeds(-getRightEncoderRate(),-getLeftEncoderRate());
+    }
 
     public void resetEncoders(){
         FrontLeft.setSelectedSensorPosition(0);
@@ -77,6 +80,10 @@ public class DriveSubsystem extends SubsystemBase {
         FrontLeft.setVoltage(leftVolts);
         FrontRight.setVoltage(-rightVolts);
         m_drive.feed();
+    }
+    public void tankDriveVolts2(double leftVolts, double rightVolts){
+        FrontRight.setVoltage(-leftVolts);
+        FrontLeft.setVoltage(rightVolts);
     }
 
     public double getAverageEncoderDistance() {

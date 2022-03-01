@@ -28,10 +28,8 @@ public final class Constants {
 	public static final int RClimberMotor=11;
 	public static final int HopperMotor=12;
 
-	public static final int leftForwardPiston= 1;
-	public static final int leftBackwardPiston =2;
-	public static final int rightForwardPiston=3;
-	public static final int rightBackwardPiston=4;
+	public static final int ForwardPiston= 1;
+	public static final int BackwardPiston =2;
 
 	public static final int feederSensor=1;
 
