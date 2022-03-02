@@ -23,6 +23,7 @@ public class IntakeCommand extends CommandBase{
         m_intake.setIntake(0);
         m_hopper.setHopper(0);
         m_feeder.setFeeder(0);
+      //  m_intake.retractPistons(); 
     }
     @Override
     public void execute(){
@@ -37,6 +38,7 @@ public class IntakeCommand extends CommandBase{
     }
     @Override
     public void end(boolean Interrupted){
+       // m_intake.retractPistons();
         m_intake.stopIntake();
         m_hopper.stopHopper();
         m_feeder.stop();
