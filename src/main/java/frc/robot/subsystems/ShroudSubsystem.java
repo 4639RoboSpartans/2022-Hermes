@@ -9,7 +9,7 @@ import frc.robot.Constants;
 
 public class ShroudSubsystem extends SubsystemBase{
     private WPI_VictorSPX ShroudMotor = new WPI_VictorSPX(Constants.ShroudMotor);
-    private Encoder ShroudEncoder = new Encoder(1,2);
+    private Encoder ShroudEncoder = new Encoder(2,3);
     public ShroudSubsystem(){
         ShroudMotor.configFactoryDefault();
         ShroudMotor.setNeutralMode(NeutralMode.Brake);

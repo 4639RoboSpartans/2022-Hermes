@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimeLightSubsystem extends SubsystemBase {
     private NetworkTable LLTable = NetworkTableInstance.getDefault().getTable("limelight");
-    private double LLHeight = 0;
+    private double LLHeight = 23.5;
     private double TargetHeight=104;//inches
-    private double LLAngle = 0;
+    private double LLAngle = 33;
     public LimeLightSubsystem() {
         LLTable.getEntry("camMode").setNumber(0); // sets camera to vision processing mode
         LLTable.getEntry("pipeline").setNumber(0);// sets the pipeline to 0 which is default

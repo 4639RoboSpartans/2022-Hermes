@@ -11,7 +11,7 @@ public class IntakeCommand extends CommandBase{
     private IntakeSubsystem m_intake ;
     private HopperSubsystem m_hopper;
     private FeederSubsystem m_feeder ;
-
+    // public DigitalInput ballOccupied = new DigitalInput(Constants.feederSensor);
     public IntakeCommand(IntakeSubsystem m_intake, HopperSubsystem m_hopper, FeederSubsystem m_feeder){
         this.m_intake=m_intake;
         this.m_hopper = m_hopper;
@@ -34,6 +34,7 @@ public class IntakeCommand extends CommandBase{
         // }else{
         //     m_feeder.stop();
         // }
+        m_feeder.setFeeder(0.4);
 
     }
     @Override

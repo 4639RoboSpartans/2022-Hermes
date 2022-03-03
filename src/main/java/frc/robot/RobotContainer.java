@@ -57,22 +57,23 @@ public class RobotContainer {
   public OI m_oi = new OI();
   public DriveSubsystem m_drive = new DriveSubsystem();
   public IntakeSubsystem m_intake = new IntakeSubsystem();
-  // public ClimberSubsystem m_climber = new ClimberSubsystem();
+  public ClimberSubsystem m_climber = new ClimberSubsystem();
   public FeederSubsystem m_feeder = new FeederSubsystem();
   public HopperSubsystem m_hopper = new HopperSubsystem();
-  // public LimeLightSubsystem m_LL = new LimeLightSubsystem();
-  // public ShooterSubsystem m_shooter = new ShooterSubsystem();
-  // public ShroudSubsystem m_shroud = new ShroudSubsystem();
+  public LimeLightSubsystem m_LL = new LimeLightSubsystem();
+  public ShooterSubsystem m_shooter = new ShooterSubsystem();
+  public ShroudSubsystem m_shroud = new ShroudSubsystem();
   public TurretSubsystem m_turret = new TurretSubsystem();
 
   public DriveCommand drive = new DriveCommand(m_drive, m_oi);
   public IntakeCommand intake = new IntakeCommand(m_intake,m_hopper,m_feeder);
   public OutTakeCommand outtake = new OutTakeCommand(m_intake,m_hopper,m_feeder);
   public TurretCommand turret = new TurretCommand(m_turret);
+  public ShooterCommand shooter = new ShooterCommand(m_shooter,m_feeder,m_LL);
   public TurretCommandR turret1 = new TurretCommandR(m_turret);
   public AutonPath1 auto1 = new AutonPath1(m_intake,m_hopper);
   
-  public DigitalInput ballOccupied = new DigitalInput(Constants.feederSensor);
+  
   
   private String path11;
   private String path12;
@@ -109,14 +110,13 @@ public class RobotContainer {
     m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() ->
     m_intake.retractPistons(), m_intake));
-    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
+    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new IntakeCommand(m_intake,m_hopper,m_feeder));
     m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
-    m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
-    m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
-    // m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new
-    // VisionAimCommand(m_LL, m_turret, m_shroud, m_drive));
-    // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(new
-    // ShooterCommand(m_shooter, m_feeder, m_LL));
+    // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
+   // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
+    m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new
+    VisionAimCommand(m_LL, m_turret, m_shroud, m_drive));
+    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(new ShooterCommand(m_shooter,m_feeder,m_LL));
     // m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(new
     // ClimberForwardCommand(m_climber));
     // m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(new

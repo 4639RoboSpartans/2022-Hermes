@@ -54,7 +54,6 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    SmartDashboard.putBoolean("Ball", m_robotContainer.ballOccupied.get());
     CommandScheduler.getInstance().run();
   }
 
@@ -100,6 +99,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("rightEncoder", m_robotContainer.m_drive.getRightEncoderPosition());
     SmartDashboard.putNumber("X displacement", m_robotContainer.m_drive.getNavx().getDisplacementX());
     SmartDashboard.putNumber("Z displacement", m_robotContainer.m_drive.getNavx().getDisplacementZ());
+    SmartDashboard.putNumber("Shroud Encoder", m_robotContainer.m_shroud.getShroudPosition());
+    SmartDashboard.putNumber("TurretEncoder", m_robotContainer.m_turret.getTurretRot());
+    SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
+    SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.getAngleX());
+    SmartDashboard.putNumber("LLPitch", m_robotContainer.m_LL.getAngleY());
+    SmartDashboard.putNumber("LLDist", m_robotContainer.m_LL.DistanceToTarget());
   }
 
   @Override

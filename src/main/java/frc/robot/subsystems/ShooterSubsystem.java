@@ -15,18 +15,18 @@ public class ShooterSubsystem extends SubsystemBase{
         ShooterMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
     public void setShooter(double speed){
-        ShooterMotor.set(speed);
+        ShooterMotor.set(-speed);
     }
     public void setShooterVolt(double volts){
-        ShooterMotor.setVoltage(volts);
+        ShooterMotor.setVoltage(-volts);
     }
     public void stopShooter(){
         ShooterMotor.set(0);
     }
     public double getRate(){
-        return ShooterMotor.getSelectedSensorVelocity();
+        return -ShooterMotor.getSelectedSensorVelocity();
     }
     public double getPosition(){
-        return ShooterMotor.getSelectedSensorPosition();
+        return -ShooterMotor.getSelectedSensorPosition();
     } 
 }

@@ -13,7 +13,7 @@ public class FeederSubsystem extends SubsystemBase{
         feederMotor.setNeutralMode(NeutralMode.Coast);
     }
     public void setFeeder(double speed){
-        feederMotor.set(speed);
+        feederMotor.set(-speed);
     }
     public void stop(){
         feederMotor.set(0);
