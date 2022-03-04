@@ -41,7 +41,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -110,7 +109,7 @@ public class RobotContainer {
     m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() ->
     m_intake.retractPistons(), m_intake));
-    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(new IntakeCommand(m_intake,m_hopper,m_feeder));
+    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
     m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
     // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
    // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
