@@ -18,7 +18,7 @@ public class ClimberBackwardCommand extends CommandBase{
 
     @Override
     public void execute(){
-        m_climber.setClimber(-0.2, -0.2);
+        m_climber.setClimber(-0.5, -0.5);
     }
     
     @Override

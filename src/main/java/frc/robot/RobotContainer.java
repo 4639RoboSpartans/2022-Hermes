@@ -72,7 +72,8 @@ public class RobotContainer {
   public TurretCommandR turret1 = new TurretCommandR(m_turret, m_shroud);
   public AutonPath1 auto1 = new AutonPath1(m_intake,m_hopper);
   public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud, m_drive);
-  
+  public ClimberForwardCommand climberforward = new ClimberForwardCommand(m_climber);
+  public ClimberBackwardCommand climberbackward = new ClimberBackwardCommand(m_climber);
   
   
   private String path11;
@@ -116,10 +117,8 @@ public class RobotContainer {
    m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
     m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(LL);
     // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
-    // m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(new
-    // ClimberForwardCommand(m_climber));
-    // m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(new
-    // ClimberBackwardCommand(m_climber));
+    m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(climberforward);
+    m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(climberbackward);
   }
   public Command getAutonomousCommand() {
     RamseteCommand ramseteCommand = new RamseteCommand(
