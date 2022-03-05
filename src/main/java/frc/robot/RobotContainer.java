@@ -67,10 +67,11 @@ public class RobotContainer {
   public DriveCommand drive = new DriveCommand(m_drive, m_oi);
   public IntakeCommand intake = new IntakeCommand(m_intake,m_hopper,m_feeder);
   public OutTakeCommand outtake = new OutTakeCommand(m_intake,m_hopper,m_feeder);
-  public TurretCommand turret = new TurretCommand(m_turret);
-  public ShooterCommand shooter = new ShooterCommand(m_shooter,m_feeder,m_LL);
-  public TurretCommandR turret1 = new TurretCommandR(m_turret);
+  public TurretCommand turret = new TurretCommand(m_turret, m_shroud);
+  public ShooterCommand shooter = new ShooterCommand(m_shooter,m_feeder,m_LL, m_hopper);
+  public TurretCommandR turret1 = new TurretCommandR(m_turret, m_shroud);
   public AutonPath1 auto1 = new AutonPath1(m_intake,m_hopper);
+  public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud, m_drive);
   
   
   
@@ -111,11 +112,10 @@ public class RobotContainer {
     m_intake.retractPistons(), m_intake));
     m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
     m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
-    // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
-   // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
-    m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(new
-    VisionAimCommand(m_LL, m_turret, m_shroud, m_drive));
-    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(new ShooterCommand(m_shooter,m_feeder,m_LL));
+    m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
+   m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
+    m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(LL);
+    // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
     // m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(new
     // ClimberForwardCommand(m_climber));
     // m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(new

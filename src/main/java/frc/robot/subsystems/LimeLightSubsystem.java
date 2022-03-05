@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimeLightSubsystem extends SubsystemBase {
-    private NetworkTable LLTable = NetworkTableInstance.getDefault().getTable("limelight");
+    public NetworkTable LLTable = NetworkTableInstance.getDefault().getTable("limelight");
     private double LLHeight = 23.5;
     private double TargetHeight=104;//inches
     private double LLAngle = 33;

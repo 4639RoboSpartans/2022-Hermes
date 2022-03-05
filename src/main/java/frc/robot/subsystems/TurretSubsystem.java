@@ -11,16 +11,24 @@ public class TurretSubsystem extends SubsystemBase {
     private WPI_TalonFX turretMotor = new WPI_TalonFX(Constants.TurretMotor);
     public TurretSubsystem(){
         turretMotor.configFactoryDefault();
-        turretMotor.setNeutralMode(NeutralMode.Coast);
+        turretMotor.setNeutralMode(NeutralMode.Brake);
 
         turretMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
     public void setTurret(double speed){
-        turretMotor.set(speed);
+        if(getTurretRot()<=500&&speed<0){
+            turretMotor.set(0);
+        }else if(getTurretRot()>=42000&&speed>0){
+            turretMotor.set(0);
+        }else{
+            turretMotor.set(speed);
+        }
+        
     }
     public void stopTurret(){
         turretMotor.set(0);
     }
+    //range of 49,000
     public double getTurretRot(){
         return turretMotor.getSelectedSensorPosition();
     }

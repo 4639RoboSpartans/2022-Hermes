@@ -15,8 +15,18 @@ public class ShroudSubsystem extends SubsystemBase{
         ShroudMotor.setNeutralMode(NeutralMode.Brake);
         ShroudEncoder.setDistancePerPulse(360.0/2048);
     }
+    public void resetEncoder(){
+        ShroudEncoder.reset();
+    }
     public void setShroud(double speed){
-        ShroudMotor.set(speed);
+        if(getShroudPosition()>=235&&speed>0){
+            ShroudMotor.set(0);
+        }else if(getShroudPosition()<30 && speed<0){
+            ShroudMotor.set(0);
+        }else{
+            ShroudMotor.set(speed);
+        }
+        
     }
     public void stopShroud(){
         ShroudMotor.set(0);

@@ -25,7 +25,7 @@ public class DriveCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.arcadeDrive(speedLimiter.calculate(-oi.getAxis(0, Constants.Axes.LEFT_STICK_Y)*0.7),
+        m_drive.arcadeDrive(speedLimiter.calculate(-oi.getAxis(0, Constants.Axes.LEFT_STICK_Y))*0.65,
 				rotationLimiter.calculate(-oi.getAxis(0, Constants.Axes.RIGHT_STICK_X) )
 						* Constants.ROTATION_SENSITIVITY);
     }

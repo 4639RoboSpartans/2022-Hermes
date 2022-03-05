@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    m_robotContainer.m_shroud.resetEncoder();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -102,9 +103,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Shroud Encoder", m_robotContainer.m_shroud.getShroudPosition());
     SmartDashboard.putNumber("TurretEncoder", m_robotContainer.m_turret.getTurretRot());
     SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
-    SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.getAngleX());
+    SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
     SmartDashboard.putNumber("LLPitch", m_robotContainer.m_LL.getAngleY());
     SmartDashboard.putNumber("LLDist", m_robotContainer.m_LL.DistanceToTarget());
+    SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
   }
 
   @Override
