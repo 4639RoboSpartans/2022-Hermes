@@ -3,8 +3,10 @@ package frc.robot.commands;
 
 import java.io.Console;
 
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
@@ -15,22 +17,22 @@ import frc.robot.subsystems.TurretSubsystem;
 public class VisionAimCommand extends CommandBase {
     private LimeLightSubsystem LL;
     private TurretSubsystem m_turret;
-    private ShroudSubsystem m_shroud;    
-    private double LLHeight = 23.5;
-    private double TargetHeight=104;//inches
-    private double LLAngle = 33;
-    private DriveSubsystem m_drive;
+    private ShroudSubsystem m_shroud;   
+    public double LLHeight = 23.5;
+    public double TargetHeight=104;//inches
+    public double LLAngle = 33;
+    // private DriveSubsystem m_drive;
     //add feedforward mechanism!!!!!!!!
-    PIDController PIDVTurret = new PIDController(0.05, 0, 0);
-    PIDController PIDVShroud = new PIDController(0.0012, 0.0017, 0);
-    public VisionAimCommand(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud, DriveSubsystem m_drive){
+    PIDController PIDVTurret = new PIDController(0.03, 0, 0);
+    PIDController PIDVShroud = new PIDController(0.0014, 0.0004, 0.0000);//0.0014, 0.0044,0.00
+    public VisionAimCommand(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud){
         this.LL = LL;
         this.m_turret = m_turret;
         this.m_shroud = m_shroud;
-        this.m_drive = m_drive;
-        PIDVTurret.setTolerance(1);
-        PIDVShroud.setTolerance(2);
-        addRequirements(LL, m_turret, m_shroud, m_drive);
+        // this.m_drive = m_drive;
+        PIDVTurret.setTolerance(0.5);
+        PIDVShroud.setTolerance(7);
+        addRequirements(LL, m_turret, m_shroud);
     }
     @Override
     public void initialize(){
@@ -39,11 +41,32 @@ public class VisionAimCommand extends CommandBase {
     }
     @Override
     public void execute(){
-        SmartDashboard.putNumber("Dist", DistanceToTarget());
+        NetworkTableEntry ty = LL.LLTable.getEntry("ty");
+double targetOffsetAngle_Vertical = ty.getDouble(0.0);
+
+// how many degrees back is your limelight rotated from perfectly vertical?
+double limelightMountAngleDegrees = 33.0;
+
+// distance from the center of the Limelight lens to the floor
+double limelightLensHeightInches = 23.5;
+
+// distance from the target to the floor
+double goalHeightInches = 104.0;
+
+double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+//calculate distance
+double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)/Math.tan(angleToGoalRadians);
+double desiredPosition  = -0.0031*Math.pow(distanceFromLimelightToGoalInches,2) + 2.4152*distanceFromLimelightToGoalInches - 180;
+
+        //double dist =(TargetHeight-LLHeight)/Math.tan(Math.toRadians(Math.atan2(1,y)+LLAngle));
+        //SmartDashboard.putNumber("Dist", distanceFromLimelightToGoalInches);
         if(LL.LLTable.getEntry("tx").getDouble(0)!=-1){
             SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
             m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
-            m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), 200));
+            m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
+            
         }else{
             //put tracking code here
             SmartDashboard.putBoolean("Shooter", false);

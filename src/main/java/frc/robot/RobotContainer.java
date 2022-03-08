@@ -4,7 +4,8 @@
 
 package frc.robot;
 
-import frc.robot.commands.AutonPath1;
+import frc.robot.commands.AimShootCommand;
+import frc.robot.commands.AutonPathDeployIntake;
 import frc.robot.commands.ClimberBackwardCommand;
 import frc.robot.commands.ClimberForwardCommand;
 import frc.robot.commands.DriveCommand;
@@ -65,17 +66,20 @@ public class RobotContainer {
   public TurretSubsystem m_turret = new TurretSubsystem();
 
   public DriveCommand drive = new DriveCommand(m_drive, m_oi);
-  public IntakeCommand intake = new IntakeCommand(m_intake,m_hopper,m_feeder);
+  public IntakeCommand intake = new IntakeCommand(m_intake,m_hopper,m_feeder, m_oi);
   public OutTakeCommand outtake = new OutTakeCommand(m_intake,m_hopper,m_feeder);
-  public TurretCommand turret = new TurretCommand(m_turret, m_shroud);
-  public ShooterCommand shooter = new ShooterCommand(m_shooter,m_feeder,m_LL, m_hopper);
-  public TurretCommandR turret1 = new TurretCommandR(m_turret, m_shroud);
-  public AutonPath1 auto1 = new AutonPath1(m_intake,m_hopper);
-  public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud, m_drive);
+  // public TurretCommand turret = new TurretCommand(m_turret, m_shroud);
+  public ShooterCommand shooter = new ShooterCommand(m_shooter,m_LL, m_feeder, m_hopper);
+  // public TurretCommandR turret1 = new TurretCommandR(m_turret, m_shroud);
+  
+  public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud);
   public ClimberForwardCommand climberforward = new ClimberForwardCommand(m_climber);
   public ClimberBackwardCommand climberbackward = new ClimberBackwardCommand(m_climber);
+  public AutonPathDeployIntake auto1 = new AutonPathDeployIntake(m_intake,m_hopper);
+  public AimShootCommand aimshoot = new AimShootCommand(m_shooter, m_feeder, m_hopper, m_LL, m_turret, m_shroud);
   
-  
+
+
   private String path11;
   private String path12;
   private String path21;
@@ -90,15 +94,9 @@ public class RobotContainer {
   Trajectory traj33 = new Trajectory();
   public RobotContainer() {
     path31 = "paths/path3part1.wpilib.json";
-    path32 = "paths/path3part2.wpilib.json";
-    path33 = "paths/Unnamed.wpilib (2).json";
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path31);
-      Path trajectoryPath2 = Filesystem.getDeployDirectory().toPath().resolve(path32);
-      Path trajectoryPath3 = Filesystem.getDeployDirectory().toPath().resolve(path33);
       traj31 = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-      traj32 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
-      traj33 = TrajectoryUtil.fromPathweaverJson(trajectoryPath3);
    } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
    }
@@ -107,16 +105,17 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     m_drive.setDefaultCommand(drive);
+    m_intake.setDefaultCommand(intake);
     m_oi.getPovButton(1, 0).whenPressed(new RunCommand(() ->
     m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() ->
     m_intake.retractPistons(), m_intake));
-    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
-    m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
-    m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
-   m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
+    // m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
+    // m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
+  //   m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
+  //  m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
     m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(LL);
-    // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
+    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
     m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(climberforward);
     m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(climberbackward);
   }
@@ -136,43 +135,10 @@ public class RobotContainer {
         m_drive::tankDriveVolts,
         m_drive);
     m_drive.resetOdometry(traj31.getInitialPose());
-
-    RamseteCommand ramseteCommand2 = new RamseteCommand(
-        traj32,
-        m_drive::getPose,
-        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-        new SimpleMotorFeedforward(
-            Constants.ksVolts,
-            Constants.kvVoltSecondsPerMeter,
-            Constants.kaVoltSecondsSquaredPerMeter),
-        Constants.kDriveKinematics,
-        m_drive::getWheelSpeeds,
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        new PIDController(Constants.kPDriveVel, 0, 0),
-        m_drive::tankDriveVolts,
-        m_drive);
-    m_drive.resetOdometry(traj32.getInitialPose());
-
-
-    RamseteCommand ramseteCommand3 = new RamseteCommand(
-      traj33,
-      m_drive::getPose,
-      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-      new SimpleMotorFeedforward(
-          Constants.ksVolts,
-          Constants.kvVoltSecondsPerMeter,
-          Constants.kaVoltSecondsSquaredPerMeter),
-      Constants.kDriveKinematics,
-      m_drive::getWheelSpeeds,
-      
-      new PIDController(Constants.kPDriveVel, 0, 0),
-      new PIDController(Constants.kPDriveVel, 0, 0),
-      m_drive::tankDriveVolts,
-      m_drive);
-  m_drive.resetOdometry(traj33.getInitialPose());
     
 //return ramseteCommand3.andThen(() -> m_drive.tankDriveVolts(0, 0));
-   return new ParallelCommandGroup(auto1, ramseteCommand).andThen(() -> m_drive.tankDriveVolts(0, 0));
+return aimshoot;
+  //  return new ParallelCommandGroup(auto1, ramseteCommand).andThen(() -> m_drive.tankDriveVolts(0, 0)).andThen(aimshoot);
   /*.andThen(new ParallelCommandGroup(auto1, ramseteCommand2).andThen(() -> m_drive.tankDriveVolts(0, 0)));*/
     //auto1.andThen(() -> m_drive.tankDriveVolts(0, 0));
     // new ParallelCommandGroup(

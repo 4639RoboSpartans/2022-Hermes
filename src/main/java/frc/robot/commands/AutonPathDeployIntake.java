@@ -16,11 +16,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutonPath1 extends CommandBase {
+public class AutonPathDeployIntake extends CommandBase {
      public IntakeSubsystem m_intake;
      public HopperSubsystem m_hopper;
      Timer time;
-    public AutonPath1(IntakeSubsystem m_intake, HopperSubsystem m_hopper) {
+    public AutonPathDeployIntake(IntakeSubsystem m_intake, HopperSubsystem m_hopper) {
         this.m_hopper=m_hopper;
         this.m_intake=m_intake;
         time = new Timer();
@@ -35,8 +35,9 @@ public class AutonPath1 extends CommandBase {
     }
     @Override 
     public void execute(){
-        m_intake.setIntake(0.5);
+        m_intake.setIntake(0.3);
         m_hopper.setHopper(0.5);
+        
     }
     @Override
     public void end(boolean fin){

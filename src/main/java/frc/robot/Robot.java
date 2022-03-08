@@ -67,9 +67,11 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
     m_robotContainer.m_drive.resetEncoders();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
+    m_robotContainer.m_shroud.resetEncoder();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -105,10 +107,27 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
     SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
     SmartDashboard.putNumber("LLPitch", m_robotContainer.m_LL.getAngleY());
-    SmartDashboard.putNumber("LLDist", m_robotContainer.m_LL.DistanceToTarget());
+    SmartDashboard.putNumber("LLDist", DistanceToTarget());
     SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
   }
 
+  public double DistanceToTarget() {
+    return (104-23.5)/Math.tan(Math.toRadians(getAngleY()+33));
+}
+
+public double getAngleX() {
+    double nx = (1 / 160) * (m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0) - 159.5);
+    double vpw = 2.0 * Math.tan(Math.toRadians(54.0 / 2));
+    double x = (vpw / 2) * nx;
+    return Math.atan2(1, x);
+}
+
+public double getAngleY() {
+    double ny = (1 / 160) * (119.5 - m_robotContainer.m_LL.LLTable.getEntry("ty").getDouble(0));
+    double vph = 2.0 * Math.tan(Math.toRadians(41.0 / 2));
+    double y = (vph / 2) * ny;
+    return Math.atan2(1,y);    
+}
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
