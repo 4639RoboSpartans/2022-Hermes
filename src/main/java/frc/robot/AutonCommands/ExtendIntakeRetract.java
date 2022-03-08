@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.AutonCommands;
 
 import java.nio.file.Path;
 
@@ -16,11 +16,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutonPathDeployIntake extends CommandBase {
+public class ExtendIntakeRetract extends CommandBase {
      public IntakeSubsystem m_intake;
      public HopperSubsystem m_hopper;
      Timer time;
-    public AutonPathDeployIntake(IntakeSubsystem m_intake, HopperSubsystem m_hopper) {
+    public ExtendIntakeRetract(IntakeSubsystem m_intake, HopperSubsystem m_hopper) {
         this.m_hopper=m_hopper;
         this.m_intake=m_intake;
         time = new Timer();
@@ -35,7 +35,7 @@ public class AutonPathDeployIntake extends CommandBase {
     }
     @Override 
     public void execute(){
-        m_intake.setIntake(0.3);
+        m_intake.setIntake(0.7);
         m_hopper.setHopper(0.5);
         
     }
@@ -43,7 +43,7 @@ public class AutonPathDeployIntake extends CommandBase {
     public void end(boolean fin){
         m_intake.setIntake(0);
         m_hopper.setHopper(0);
-        //m_intake.extendPistons();
+        m_intake.extendPistons();
     }
     @Override
     public boolean isFinished(){
