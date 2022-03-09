@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class DriveSubsystem extends SubsystemBase {
-    private WPI_TalonFX FrontLeft = new WPI_TalonFX(Constants.DriveMotorFrontLeft);
-    private WPI_TalonFX BackLeft = new WPI_TalonFX(Constants.DriveMotorBackLeft);
-    private WPI_TalonFX FrontRight = new WPI_TalonFX(Constants.DriveMotorFrontRight);
-    private WPI_TalonFX BackRight = new WPI_TalonFX(Constants.DriveMotorBackRight);
+    public WPI_TalonFX FrontLeft = new WPI_TalonFX(Constants.DriveMotorFrontLeft);
+    public WPI_TalonFX BackLeft = new WPI_TalonFX(Constants.DriveMotorBackLeft);
+    public WPI_TalonFX FrontRight = new WPI_TalonFX(Constants.DriveMotorFrontRight);
+    public WPI_TalonFX BackRight = new WPI_TalonFX(Constants.DriveMotorBackRight);
     private AHRS navx = new AHRS();// 0.665 m track width
     private DifferentialDrive m_drive;
     private DifferentialDriveOdometry m_odometry;

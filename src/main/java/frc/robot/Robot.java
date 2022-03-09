@@ -7,6 +7,8 @@ package frc.robot;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
@@ -37,8 +39,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+
     CameraServer.startAutomaticCapture();
     m_robotContainer = new RobotContainer();
+    m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
   }
 
   /**
@@ -59,7 +67,13 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Coast);
+    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -70,6 +84,11 @@ public class Robot extends TimedRobot {
     
     m_robotContainer.m_drive.resetEncoders();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
     // schedule the autonomous command (example)
     m_robotContainer.m_shroud.resetEncoder();
     if (m_autonomousCommand != null) {
@@ -84,6 +103,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_robotContainer.m_shroud.resetEncoder();
+    m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Brake);
+    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -107,27 +131,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
     SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
     SmartDashboard.putNumber("LLPitch", m_robotContainer.m_LL.getAngleY());
-    SmartDashboard.putNumber("LLDist", DistanceToTarget());
     SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
   }
 
-  public double DistanceToTarget() {
-    return (104-23.5)/Math.tan(Math.toRadians(getAngleY()+33));
-}
-
-public double getAngleX() {
-    double nx = (1 / 160) * (m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0) - 159.5);
-    double vpw = 2.0 * Math.tan(Math.toRadians(54.0 / 2));
-    double x = (vpw / 2) * nx;
-    return Math.atan2(1, x);
-}
-
-public double getAngleY() {
-    double ny = (1 / 160) * (119.5 - m_robotContainer.m_LL.LLTable.getEntry("ty").getDouble(0));
-    double vph = 2.0 * Math.tan(Math.toRadians(41.0 / 2));
-    double y = (vph / 2) * ny;
-    return Math.atan2(1,y);    
-}
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
