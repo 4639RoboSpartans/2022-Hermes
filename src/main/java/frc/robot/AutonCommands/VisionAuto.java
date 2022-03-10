@@ -78,7 +78,7 @@ public class VisionAuto extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(time.get()>4){
+        if(time.get()>1){
             time.stop();
             return true;
         }

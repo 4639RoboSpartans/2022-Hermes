@@ -52,7 +52,7 @@ double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
 //calculate distance
 double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)/Math.tan(angleToGoalRadians);
-desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 5250;
+desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 5300;
         
 return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforward.calculate(desiredSpeed);
     }

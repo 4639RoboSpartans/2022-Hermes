@@ -35,7 +35,7 @@ public class ExtendIntakeRetract extends CommandBase {
     }
     @Override 
     public void execute(){
-        m_intake.setIntake(0.7);
+        m_intake.setIntake(0.5);
         m_hopper.setHopper(0.5);
         
     }
