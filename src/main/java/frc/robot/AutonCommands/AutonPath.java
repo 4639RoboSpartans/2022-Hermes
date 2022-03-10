@@ -81,4 +81,8 @@ public class AutonPath {
             m_drive::tankDriveVolts,
             m_drive);
     }
+
+    public Trajectory getTrajectory() {
+        return trajectory;
+    }
 }
