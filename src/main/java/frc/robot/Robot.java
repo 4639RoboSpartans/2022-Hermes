@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.m_shroud.resetEncoder();
+  
     m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);

@@ -47,7 +47,7 @@ public class ExtendIntake extends CommandBase {
     }
     @Override
     public boolean isFinished(){
-        if(time.get()>4){
+        if(time.get()>3){
             time.stop();
             return true;
         }

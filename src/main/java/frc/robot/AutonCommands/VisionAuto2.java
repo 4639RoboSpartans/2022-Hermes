@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.AutonCommands;
 
 import java.io.Console;
 
@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
@@ -13,22 +14,23 @@ import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.ShroudSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
-public class VisionAimCommand extends CommandBase {
+public class VisionAuto2 extends CommandBase {
     private LimeLightSubsystem LL;
     private TurretSubsystem m_turret;
     private ShroudSubsystem m_shroud;
     public double LLHeight = 23.5;
     public double TargetHeight = 104;// inches
     public double LLAngle = 33;
-    PIDController PIDVTurret = new PIDController(0.033, 0, 0);
-    PIDController PIDVShroud = new PIDController(0.0015, 0.00045, 0.0000);// 0.0014, 0.0044,0.00
-
-    public VisionAimCommand(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud) {
+    PIDController PIDVTurret = new PIDController(0.03, 0, 0);
+    PIDController PIDVShroud = new PIDController(0.0014, 0.0004, 0.0000);// 0.0014, 0.0044,0.00
+    Timer time;
+    public VisionAuto2(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud) {
         this.LL = LL;
         this.m_turret = m_turret;
         this.m_shroud = m_shroud;
-        PIDVTurret.setTolerance(0);
+        PIDVTurret.setTolerance(0.5);
         PIDVShroud.setTolerance(7);
+        time = new Timer();
         addRequirements(LL, m_turret, m_shroud);
     }
 
@@ -36,6 +38,7 @@ public class VisionAimCommand extends CommandBase {
     public void initialize() {
         m_turret.setTurret(0);
         m_shroud.setShroud(0);
+        time.start();
     }
 
     @Override
@@ -75,6 +78,10 @@ public class VisionAimCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        if(time.get()>1){
+            time.stop();
+            return true;
+        }
         return false;
     }
 

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.AutonCommands;
 
 import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
@@ -6,13 +6,14 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShooterCommand extends CommandBase{
+public class ShooterAuto2 extends CommandBase{
     private ShooterSubsystem m_shooter ;
     private FeederSubsystem m_feeder ;
     private HopperSubsystem m_hopper;
@@ -21,11 +22,13 @@ public class ShooterCommand extends CommandBase{
     private BangBangController shooterBang = new BangBangController(5);
     // private PIDController shooterPID = new PIDController(0.00026,0.00006,0.0);
     private double desiredSpeed =6000;
-    public ShooterCommand(ShooterSubsystem m_shooter, LimeLightSubsystem LL, FeederSubsystem m_feeder, HopperSubsystem m_hopper){
+    Timer time;
+    public ShooterAuto2(ShooterSubsystem m_shooter, LimeLightSubsystem LL, FeederSubsystem m_feeder, HopperSubsystem m_hopper){
         this.m_shooter = m_shooter;
         this.m_feeder = m_feeder;
         this.m_hopper = m_hopper;
         this.LL = LL;
+        time = new Timer();
         // shooterPID.setTolerance(50);
         addRequirements(m_shooter, LL);
     }
@@ -49,7 +52,7 @@ double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
 //calculate distance
 double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)/Math.tan(angleToGoalRadians);
-desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 5200;
+desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 5500;
         
 return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforward.calculate(desiredSpeed);
     }
@@ -58,6 +61,7 @@ return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforwar
         m_shooter.setShooter(0);
         m_feeder.setFeeder(0);
         m_hopper.setHopper(0);
+        time.start();
     }
     @Override
     public void execute(){
@@ -65,7 +69,7 @@ return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforwar
         m_shooter.setShooter(calculate());
                 if(m_shooter.getRate()>=desiredSpeed*1.1){
                     m_feeder.setFeeder(0.65);
-                    m_hopper.setHopper(0.5);
+                    m_hopper.setHopper(0.65);
 
             
         }else{
@@ -81,6 +85,10 @@ return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforwar
     }
     @Override 
     public boolean isFinished(){
+        if(time.get()>4){
+            time.stop();
+            return true;
+        }
         return false;
     }
 

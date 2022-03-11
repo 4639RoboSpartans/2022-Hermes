@@ -8,7 +8,9 @@ import frc.robot.AutonCommands.ExtendIntake;
 import frc.robot.AutonCommands.ExtendIntakeRetract;
 import frc.robot.AutonCommands.IntakeRetract;
 import frc.robot.AutonCommands.ShooterAuto;
+import frc.robot.AutonCommands.ShooterAuto2;
 import frc.robot.AutonCommands.VisionAuto;
+import frc.robot.AutonCommands.VisionAuto2;
 import frc.robot.commands.ClimberBackwardCommand;
 import frc.robot.commands.ClimberForwardCommand;
 import frc.robot.commands.DriveCommand;
@@ -81,6 +83,9 @@ public class RobotContainer {
   public ExtendIntakeRetract EIntakeR=new ExtendIntakeRetract(m_intake, m_hopper);
   public ShooterAuto  autonShooter = new ShooterAuto(m_shooter, m_LL, m_feeder, m_hopper);
   public VisionAuto autonVision = new VisionAuto(m_LL, m_turret, m_shroud);
+  public ShooterAuto2  autonShooter2 = new ShooterAuto2(m_shooter, m_LL, m_feeder, m_hopper);
+  public VisionAuto2 autonVision2 = new VisionAuto2(m_LL, m_turret, m_shroud);
+
   
   private String path11;
   private String path12;
@@ -91,18 +96,52 @@ public class RobotContainer {
   private String path31;
   private String path32;
   private String path33;
+
+  Trajectory traj11 = new Trajectory();
+  Trajectory traj12 = new Trajectory();
+
+  Trajectory traj21 = new Trajectory();
+  Trajectory traj22 = new Trajectory();
+  Trajectory traj23 = new Trajectory();
+  Trajectory traj24 = new Trajectory();
+  
   Trajectory traj31 = new Trajectory();
   Trajectory traj32 = new Trajectory();
   Trajectory traj33 = new Trajectory();
 
   public RobotContainer() {
-    path31 = "paths/path3part1.wpilib.json";
-    path32 = "paths/path3part2.wpilib.json";
+    path11 = "paths/path1part1.wpilib.json";
+    path12 = "paths/path1part2.wpilib.json";
+
+    path21 = "paths/path2part1.wpilib.json";
+    path22 = "paths/path2part2.wpilib.json";
+    path23 = "paths/path2part3.wpilib.json";
+    path24 = "paths/path2part4.wpilib.json";
+
+    // path31 = "paths/path3part1.wpilib.json";
+    // path32 = "paths/path3part2.wpilib.json";
+    // path33=   "paths/path3part3.wpilib.json";
     try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path31);
-      traj31 = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-      Path trajectoryPath2 = Filesystem.getDeployDirectory().toPath().resolve(path32);
-      traj32 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
+      Path trajectoryPath11 = Filesystem.getDeployDirectory().toPath().resolve(path11);
+      traj11 = TrajectoryUtil.fromPathweaverJson(trajectoryPath11);
+      Path trajectoryPath12 = Filesystem.getDeployDirectory().toPath().resolve(path12);
+      traj12 = TrajectoryUtil.fromPathweaverJson(trajectoryPath12);
+
+      Path trajectoryPath21 = Filesystem.getDeployDirectory().toPath().resolve(path21);
+      traj21 = TrajectoryUtil.fromPathweaverJson(trajectoryPath21);
+      Path trajectoryPath22 = Filesystem.getDeployDirectory().toPath().resolve(path22);
+      traj22 = TrajectoryUtil.fromPathweaverJson(trajectoryPath22);
+      Path trajectoryPath23 = Filesystem.getDeployDirectory().toPath().resolve(path23);
+      traj23 = TrajectoryUtil.fromPathweaverJson(trajectoryPath23);
+      Path trajectoryPath24 = Filesystem.getDeployDirectory().toPath().resolve(path24);
+      traj24 = TrajectoryUtil.fromPathweaverJson(trajectoryPath24);
+
+      // Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path31);
+      // traj31 = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      // Path trajectoryPath2 = Filesystem.getDeployDirectory().toPath().resolve(path32);
+      // traj32 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
+      // Path trajectoryPath3 = Filesystem.getDeployDirectory().toPath().resolve(path33);
+      // traj33 = TrajectoryUtil.fromPathweaverJson(trajectoryPath3);
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
     }
@@ -111,11 +150,10 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     m_drive.setDefaultCommand(drive);
-    m_intake.setDefaultCommand(intake);
     m_oi.getPovButton(1, 0).whenPressed(new RunCommand(() -> m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() -> m_intake.retractPistons(), m_intake));
-    // m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
-    // m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
+    m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
+    m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
     // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
     // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
     m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(LL);
@@ -125,6 +163,104 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    RamseteCommand ramseteCommand11 = new RamseteCommand(
+      traj11,
+      m_drive::getPose,
+      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+      new SimpleMotorFeedforward(
+          Constants.ksVolts,
+          Constants.kvVoltSecondsPerMeter,
+          Constants.kaVoltSecondsSquaredPerMeter),
+      Constants.kDriveKinematics,
+      m_drive::getWheelSpeeds,
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      m_drive::tankDriveVolts,
+      m_drive);
+  m_drive.resetOdometry(traj11.getInitialPose());
+  RamseteCommand ramseteCommand12= new RamseteCommand(
+    traj12,
+    m_drive::getPose,
+    new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+    new SimpleMotorFeedforward(
+        Constants.ksVolts,
+        Constants.kvVoltSecondsPerMeter,
+        Constants.kaVoltSecondsSquaredPerMeter),
+    Constants.kDriveKinematics,
+    m_drive::getWheelSpeeds,
+    new PIDController(Constants.kPDriveVel, 0, 0),
+    new PIDController(Constants.kPDriveVel, 0, 0),
+    m_drive::tankDriveVolts,
+    m_drive);
+m_drive.resetOdometry(traj11.getInitialPose());
+
+
+
+RamseteCommand ramseteCommand21 = new RamseteCommand(
+  traj21,
+  m_drive::getPose,
+  new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+  new SimpleMotorFeedforward(
+      Constants.ksVolts,
+      Constants.kvVoltSecondsPerMeter,
+      Constants.kaVoltSecondsSquaredPerMeter),
+  Constants.kDriveKinematics,
+  m_drive::getWheelSpeeds,
+  new PIDController(Constants.kPDriveVel, 0, 0),
+  new PIDController(Constants.kPDriveVel, 0, 0),
+  m_drive::tankDriveVolts,
+  m_drive);
+m_drive.resetOdometry(traj21.getInitialPose());
+
+RamseteCommand ramseteCommand22= new RamseteCommand(
+traj22,
+m_drive::getPose,
+new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+new SimpleMotorFeedforward(
+    Constants.ksVolts,
+    Constants.kvVoltSecondsPerMeter,
+    Constants.kaVoltSecondsSquaredPerMeter),
+Constants.kDriveKinematics,
+m_drive::getWheelSpeeds,
+new PIDController(Constants.kPDriveVel, 0, 0),
+new PIDController(Constants.kPDriveVel, 0, 0),
+m_drive::tankDriveVolts,
+m_drive);
+m_drive.resetOdometry(traj21.getInitialPose());
+
+RamseteCommand ramseteCommand23= new RamseteCommand(
+traj23,
+m_drive::getPose,
+new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+new SimpleMotorFeedforward(
+    Constants.ksVolts,
+    Constants.kvVoltSecondsPerMeter,
+    Constants.kaVoltSecondsSquaredPerMeter),
+Constants.kDriveKinematics,
+m_drive::getWheelSpeeds,
+new PIDController(Constants.kPDriveVel, 0, 0),
+new PIDController(Constants.kPDriveVel, 0, 0),
+m_drive::tankDriveVolts,
+m_drive);
+m_drive.resetOdometry(traj21.getInitialPose());
+
+RamseteCommand ramseteCommand24= new RamseteCommand(
+traj24,
+m_drive::getPose,
+new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+new SimpleMotorFeedforward(
+    Constants.ksVolts,
+    Constants.kvVoltSecondsPerMeter,
+    Constants.kaVoltSecondsSquaredPerMeter),
+Constants.kDriveKinematics,
+m_drive::getWheelSpeeds,
+new PIDController(Constants.kPDriveVel, 0, 0),
+new PIDController(Constants.kPDriveVel, 0, 0),
+m_drive::tankDriveVolts,
+m_drive);
+m_drive.resetOdometry(traj21.getInitialPose());
+
+
     RamseteCommand ramseteCommand31 = new RamseteCommand(
         traj31,
         m_drive::getPose,
@@ -156,12 +292,42 @@ public class RobotContainer {
         m_drive::tankDriveVolts,
         m_drive);
     m_drive.resetOdometry(traj31.getInitialPose());
-    // return ramseteCommand3.andThen(() -> m_drive.tankDriveVolts(0, 0));
 
-    return new ParallelCommandGroup(EIntake, ramseteCommand31).andThen(() ->
-    m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter)
-    .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand32).andThen(() ->
-    m_drive.tankDriveVolts(0, 0)));
+    RamseteCommand ramseteCommand33 = new RamseteCommand(
+      traj33,
+      m_drive::getPose,
+      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+      new SimpleMotorFeedforward(
+          Constants.ksVolts,
+          Constants.kvVoltSecondsPerMeter,
+          Constants.kaVoltSecondsSquaredPerMeter),
+      Constants.kDriveKinematics,
+      m_drive::getWheelSpeeds,
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      m_drive::tankDriveVolts,
+      m_drive);
+//   m_drive.resetOdometry(traj31.getInitialPose());
+    //path1
+    // return new ParallelCommandGroup(EIntake, ramseteCommand11).andThen(() ->
+    //  m_drive.tankDriveVolts(0, 0)).andThen(ramseteCommand12).andThen(() ->
+    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter);
+
+    //path22
+     return new ParallelCommandGroup(EIntake, ramseteCommand21).andThen(() ->
+     m_drive.tankDriveVolts(0, 0)).andThen(ramseteCommand22).andThen(() ->
+     m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter);
+//path3
+
+
+//path3
+    // return new ParallelCommandGroup(EIntake, ramseteCommand31).andThen(() ->
+    // m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter)
+    // .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand32).andThen(() ->
+    // m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
+    // m_drive.tankDriveVolts(0, 0)).andThen(autonVision2).andThen(autonShooter2);
+
+
     /*
      * .andThen(new ParallelCommandGroup(auto1, ramseteCommand2).andThen(() ->
      * m_drive.tankDriveVolts(0, 0)));
