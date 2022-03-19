@@ -16,13 +16,13 @@ public class TurretSubsystem extends SubsystemBase {
         turretMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
     public void setTurret(double speed){
-        if(getTurretRot()<=500&&speed<0){
-            turretMotor.set(0);
-        }else if(getTurretRot()>=42000&&speed>0){
-            turretMotor.set(0);
-        }else{
+        // if(getTurretRot()<=500&&speed<0){
+        //     turretMotor.set(0);
+        // }else if(getTurretRot()>=42000&&speed>0){
+        //     turretMotor.set(0);
+        // }else{
             turretMotor.set(speed);
-        }
+        // }
         
     }
     public void stopTurret(){
