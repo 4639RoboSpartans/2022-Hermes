@@ -14,12 +14,18 @@ public class ClimberSubsystem extends SubsystemBase {
         leftClimberMotor.configFactoryDefault();
         rightClimberMotor.configFactoryDefault();
 
-        leftClimberMotor.setNeutralMode(NeutralMode.Coast);
-        rightClimberMotor.setNeutralMode(NeutralMode.Coast);
+        leftClimberMotor.setNeutralMode(NeutralMode.Brake);
+        rightClimberMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     public void setClimber(double leftSpeed, double rightSpeed){
         leftClimberMotor.set(leftSpeed);
+        rightClimberMotor.set(rightSpeed);
+    }
+    public void setLeftClimber(double leftSpeed){
+        leftClimberMotor.set(leftSpeed);
+    }
+    public void setRightClimber(double rightSpeed){
         rightClimberMotor.set(rightSpeed);
     }
 
