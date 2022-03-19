@@ -19,6 +19,9 @@ public class ShooterCommand extends CommandBase{
     private LimeLightSubsystem LL ;
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.64665, 0.10772, 0.037027);
     private BangBangController shooterBang = new BangBangController(5);
+double limelightMountAngleDegrees = 33.0;
+double limelightLensHeightInches = 23.5;
+double goalHeightInches = 104.0;
     // private PIDController shooterPID = new PIDController(0.00026,0.00006,0.0);
     private double desiredSpeed =6000;
     public ShooterCommand(ShooterSubsystem m_shooter, LimeLightSubsystem LL, FeederSubsystem m_feeder, HopperSubsystem m_hopper){
@@ -32,26 +35,17 @@ public class ShooterCommand extends CommandBase{
     public double calculate(){
         //return shooterPID.calculate(m_shooter.getRate(), desiredSpeed);
         
-NetworkTableEntry ty = LL.LLTable.getEntry("ty");
-double targetOffsetAngle_Vertical = ty.getDouble(0.0);
+double targetOffsetAngle_Vertical = LL.LLTable.getEntry("ty").getDouble(0.0);
 
-// how many degrees back is your limelight rotated from perfectly vertical?
-double limelightMountAngleDegrees = 33.0;
-
-// distance from the center of the Limelight lens to the floor
-double limelightLensHeightInches = 23.5;
-
-// distance from the target to the floor
-double goalHeightInches = 104.0;
 
 double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
 double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
 //calculate distance
 double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)/Math.tan(angleToGoalRadians);
-desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 5200;
+desiredSpeed = -0.0045*Math.pow(distanceFromLimelightToGoalInches,2) + 8.6897*distanceFromLimelightToGoalInches + 4950;
         
-return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforward.calculate(desiredSpeed);
+return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)*2+0.0006*feedforward.calculate(desiredSpeed);
     }
     @Override
     public void initialize(){
@@ -64,7 +58,7 @@ return shooterBang.calculate(m_shooter.getRate(),desiredSpeed)+0.0006*feedforwar
         //m_shooter.setShooter(0.5);
         m_shooter.setShooter(calculate());
                 if(m_shooter.getRate()>=desiredSpeed*1.1){
-                    m_feeder.setFeeder(0.65);
+                    m_feeder.setFeeder(0.60);
                     m_hopper.setHopper(0.5);
 
             
