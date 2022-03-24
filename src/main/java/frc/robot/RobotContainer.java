@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.AutonCommands.ExtendIntake;
+import frc.robot.AutonCommands.ExtendIntake2;
 import frc.robot.AutonCommands.ExtendIntakeRetract;
 import frc.robot.AutonCommands.IntakeRetract;
 import frc.robot.AutonCommands.ShooterAuto;
@@ -90,6 +91,7 @@ public class RobotContainer {
   
 
   public ExtendIntake EIntake = new ExtendIntake(m_intake, m_hopper);
+  public ExtendIntake2 EIntake2 = new ExtendIntake2(m_intake, m_hopper);
   public IntakeRetract IntakeR = new IntakeRetract(m_intake, m_hopper);
   public ExtendIntakeRetract EIntakeR=new ExtendIntakeRetract(m_intake, m_hopper);
   public ShooterAuto  autonShooter = new ShooterAuto(m_shooter, m_LL, m_feeder, m_hopper);
@@ -100,6 +102,7 @@ public class RobotContainer {
   
   private String path11;
   private String path12;
+  private String path13;
   private String path21;
   private String path22;
   private String path23;
@@ -110,6 +113,7 @@ public class RobotContainer {
 
   Trajectory traj11 = new Trajectory();
   Trajectory traj12 = new Trajectory();
+  Trajectory traj13 = new Trajectory();
 
   Trajectory traj21 = new Trajectory();
   Trajectory traj22 = new Trajectory();
@@ -123,6 +127,7 @@ public class RobotContainer {
   public RobotContainer() {
     path11 = "paths/path1part1.wpilib.json";
     path12 = "paths/path1part2.wpilib.json";
+    path13 = "paths/path1part3.wpilib.json";
 
     path21 = "paths/path2part1.wpilib.json";
     path22 = "paths/path2part2.wpilib.json";
@@ -137,6 +142,8 @@ public class RobotContainer {
       traj11 = TrajectoryUtil.fromPathweaverJson(trajectoryPath11);
       Path trajectoryPath12 = Filesystem.getDeployDirectory().toPath().resolve(path12);
       traj12 = TrajectoryUtil.fromPathweaverJson(trajectoryPath12);
+      Path trajectoryPath13 = Filesystem.getDeployDirectory().toPath().resolve(path13);
+      traj13 = TrajectoryUtil.fromPathweaverJson(trajectoryPath13);
 
       Path trajectoryPath21 = Filesystem.getDeployDirectory().toPath().resolve(path21);
       traj21 = TrajectoryUtil.fromPathweaverJson(trajectoryPath21);
@@ -194,7 +201,7 @@ public class RobotContainer {
       new PIDController(Constants.kPDriveVel, 0, 0),
       m_drive::tankDriveVolts,
       m_drive);
-  m_drive.resetOdometry(traj11.getInitialPose());
+  
   RamseteCommand ramseteCommand12= new RamseteCommand(
     traj12,
     m_drive::getPose,
@@ -209,43 +216,39 @@ public class RobotContainer {
     new PIDController(Constants.kPDriveVel, 0, 0),
     m_drive::tankDriveVolts,
     m_drive);
-m_drive.resetOdometry(traj11.getInitialPose());
+    RamseteCommand ramseteCommand13= new RamseteCommand(
+      traj13,
+      m_drive::getPose,
+      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+      new SimpleMotorFeedforward(
+          Constants.ksVolts,
+          Constants.kvVoltSecondsPerMeter,
+          Constants.kaVoltSecondsSquaredPerMeter),
+      Constants.kDriveKinematics,
+      m_drive::getWheelSpeeds,
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      m_drive::tankDriveVolts,
+      m_drive);
 
 
 
 RamseteCommand ramseteCommand21 = new RamseteCommand(
-  traj21,
-  m_drive::getPose,
-  new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-  new SimpleMotorFeedforward(
-      Constants.ksVolts,
-      Constants.kvVoltSecondsPerMeter,
-      Constants.kaVoltSecondsSquaredPerMeter),
-  Constants.kDriveKinematics,
-  m_drive::getWheelSpeeds,
-  new PIDController(Constants.kPDriveVel, 0, 0),
-  new PIDController(Constants.kPDriveVel, 0, 0),
-  m_drive::tankDriveVolts,
-  m_drive);
-m_drive.resetOdometry(traj21.getInitialPose());
+        traj22,
+        m_drive::getPose,
+        new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+        new SimpleMotorFeedforward(
+            Constants.ksVolts,
+            Constants.kvVoltSecondsPerMeter,
+            Constants.kaVoltSecondsSquaredPerMeter),
+        Constants.kDriveKinematics,
+        m_drive::getWheelSpeeds,
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        new PIDController(Constants.kPDriveVel, 0, 0),
+        m_drive::tankDriveVolts,
+        m_drive);
 
 RamseteCommand ramseteCommand22= new RamseteCommand(
-traj22,
-m_drive::getPose,
-new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-new SimpleMotorFeedforward(
-    Constants.ksVolts,
-    Constants.kvVoltSecondsPerMeter,
-    Constants.kaVoltSecondsSquaredPerMeter),
-Constants.kDriveKinematics,
-m_drive::getWheelSpeeds,
-new PIDController(Constants.kPDriveVel, 0, 0),
-new PIDController(Constants.kPDriveVel, 0, 0),
-m_drive::tankDriveVolts,
-m_drive);
-m_drive.resetOdometry(traj21.getInitialPose());
-
-RamseteCommand ramseteCommand23= new RamseteCommand(
 traj23,
 m_drive::getPose,
 new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
@@ -259,7 +262,21 @@ new PIDController(Constants.kPDriveVel, 0, 0),
 new PIDController(Constants.kPDriveVel, 0, 0),
 m_drive::tankDriveVolts,
 m_drive);
-m_drive.resetOdometry(traj21.getInitialPose());
+
+RamseteCommand ramseteCommand23= new RamseteCommand(
+traj24,
+m_drive::getPose,
+new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+new SimpleMotorFeedforward(
+    Constants.ksVolts,
+    Constants.kvVoltSecondsPerMeter,
+    Constants.kaVoltSecondsSquaredPerMeter),
+Constants.kDriveKinematics,
+m_drive::getWheelSpeeds,
+new PIDController(Constants.kPDriveVel, 0, 0),
+new PIDController(Constants.kPDriveVel, 0, 0),
+m_drive::tankDriveVolts,
+m_drive);
 
 RamseteCommand ramseteCommand24= new RamseteCommand(
 traj24,
@@ -275,7 +292,6 @@ new PIDController(Constants.kPDriveVel, 0, 0),
 new PIDController(Constants.kPDriveVel, 0, 0),
 m_drive::tankDriveVolts,
 m_drive);
-m_drive.resetOdometry(traj21.getInitialPose());
 
 
     RamseteCommand ramseteCommand31 = new RamseteCommand(
@@ -292,7 +308,6 @@ m_drive.resetOdometry(traj21.getInitialPose());
         new PIDController(Constants.kPDriveVel, 0, 0),
         m_drive::tankDriveVolts,
         m_drive);
-    m_drive.resetOdometry(traj31.getInitialPose());
 
     RamseteCommand ramseteCommand32 = new RamseteCommand(
         traj32,
@@ -308,7 +323,6 @@ m_drive.resetOdometry(traj21.getInitialPose());
         new PIDController(Constants.kPDriveVel, 0, 0),
         m_drive::tankDriveVolts,
         m_drive);
-    m_drive.resetOdometry(traj31.getInitialPose());
 
     RamseteCommand ramseteCommand33 = new RamseteCommand(
       traj33,
@@ -324,27 +338,36 @@ m_drive.resetOdometry(traj21.getInitialPose());
       new PIDController(Constants.kPDriveVel, 0, 0),
       m_drive::tankDriveVolts,
       m_drive);
-//   m_drive.resetOdometry(traj31.getInitialPose());
-    //path1
-    // return new ParallelCommandGroup(EIntake, ramseteCommand11).andThen(() ->
+    //path1 19 inches from right corner, 5 inches from front
+
+    // m_drive.resetOdometry(traj11.getInitialPose());
+    // return new ParallelCommandGroup(EIntake2, ramseteCommand11).andThen(() ->
     //  m_drive.tankDriveVolts(0, 0)).andThen(ramseteCommand12).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter);
-// return null;
-    //path22
+    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+    //  .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand13).andThen(() ->
+    //  m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
+    //       m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
+// return null;   
+    //path2 17 inch left corner
+    // m_drive.resetOdometry(traj21.getInitialPose());
     //  return new ParallelCommandGroup(EIntake, ramseteCommand21).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(ramseteCommand22).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision).andThen(autonShooter);
+    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision);
+    //  .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand22))
+    //  .andThen(() ->m_drive.tankDriveVolts(0, 0))
+    //  .andThen(ramseteCommand23)
+    //  .andThen(() ->m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
 //path3
 
 
-//path3
+//path3 19in from left corner, 4 inch from front bar 39 inches from ball
+m_drive.resetOdometry(traj31.getInitialPose());
     return new ParallelCommandGroup(EIntake, ramseteCommand31).andThen(() ->
     m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
     .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand32).andThen(() ->
     m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
-    m_drive.tankDriveVolts(0, 0)).andThen(autonVision2).andThen(autonShooter2);
+    m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
 
-
+    
    //test
   //  return ramseteCommand11;
   }
