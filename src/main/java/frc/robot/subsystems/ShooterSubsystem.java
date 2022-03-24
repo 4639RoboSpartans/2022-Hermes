@@ -11,7 +11,8 @@ public class ShooterSubsystem extends SubsystemBase{
     public ShooterSubsystem(){
         ShooterMotor.configFactoryDefault();
         ShooterMotor.setNeutralMode(NeutralMode.Coast);
-
+        ShooterMotor.configVoltageCompSaturation(12);
+        ShooterMotor.enableVoltageCompensation(true);
         ShooterMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
     }
     public void setShooter(double speed){
@@ -24,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase{
         ShooterMotor.set(0);
     }
     public double getRate(){
-        return -ShooterMotor.getSelectedSensorVelocity();
+        return ((-ShooterMotor.getSelectedSensorVelocity()));
     }
     public double getPosition(){
         return -ShooterMotor.getSelectedSensorPosition();

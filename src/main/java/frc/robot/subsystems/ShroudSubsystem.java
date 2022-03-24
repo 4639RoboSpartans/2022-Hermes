@@ -14,6 +14,8 @@ public class ShroudSubsystem extends SubsystemBase{
         ShroudMotor.configFactoryDefault();
         ShroudMotor.setNeutralMode(NeutralMode.Brake);
         ShroudEncoder.setDistancePerPulse(360.0/2048);
+        ShroudMotor.configVoltageCompSaturation(12);
+        ShroudMotor.enableVoltageCompensation(true);
     }
     public void resetEncoder(){
         ShroudEncoder.reset();

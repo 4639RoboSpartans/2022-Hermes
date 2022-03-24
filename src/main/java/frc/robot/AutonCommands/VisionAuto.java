@@ -37,9 +37,9 @@ public class VisionAuto extends CommandBase {
     double limelightLensHeightInches = 23.5;
     double goalHeightInches = 104.0;
     PIDController PIDVTurret = new PIDController(0.035, 0.0002, 0);
-    PIDController PIDVShroud = new PIDController(0.00265, 0.0035, 0.0000);// 0.0014, 0.0044,0.00
+    PIDController PIDVShroud = new PIDController(0.0026, 0.006, 0.0000);// 0.0014, 0.0044,0.00
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.59406, 0.1132, 0.040239);
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
     private BangBangController shooterBang = new BangBangController(5);
 
     private OI m_oi;
@@ -76,12 +76,12 @@ public class VisionAuto extends CommandBase {
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         SmartDashboard.putNumber("Distance From Target", distanceFromLimelightToGoalInches);
-        double desiredPosition = -0.003*(Math.pow(distanceFromLimelightToGoalInches,2))+2.1423*distanceFromLimelightToGoalInches-136.6;
+        double desiredPosition = -0.0013*Math.pow(distanceFromLimelightToGoalInches,2) + 1.1982*distanceFromLimelightToGoalInches - 113.53;
         // -0.003*(Math.pow(distanceFromLimelightToGoalInches,2))+2.1423*distanceFromLimelightToGoalInches-116.6;
         //-0.0031 * Math.pow(distanceFromLimelightToGoalInches, 2)
         // + 2.4152 * distanceFromLimelightToGoalInches - 180;
 
-        double desiredSpeed = 4.0544*distanceFromLimelightToGoalInches+5700;
+        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3826.7;
         // 4.0544*distanceFromLimelightToGoalInches+5595.3;
         // -0.0045 * Math.pow(distanceFromLimelightToGoalInches, 2)
                 // + 8.6897 * distanceFromLimelightToGoalInches + 4550;
@@ -90,16 +90,18 @@ public class VisionAuto extends CommandBase {
                 SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
-                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed) *8000
-                        + 0.0006 * feedforward.calculate(desiredSpeed));
+                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed)*1000000
+                + feedforward.calculate(desiredSpeed)*0.00042);
             } else {
                 SmartDashboard.putBoolean("Shooter", false);
             }
-            if (m_shooter.getRate() > 1.15 * desiredSpeed) {
-               
-            m_hopper.setHopper(0.7);
-            m_feeder.setFeeder(0.6);
-            } 
+            if (m_shooter.getRate() >  desiredSpeed) {
+                m_hopper.setHopper(0.7);
+                m_feeder.setFeeder(0.6);
+            } else{
+                m_hopper.setHopper(0);
+                m_feeder.setFeeder(0);
+            }
         
 
     }
@@ -116,12 +118,14 @@ public class VisionAuto extends CommandBase {
         m_turret.stopTurret();
         m_shroud.stopShroud();
         m_shooter.stopShooter();
+        m_hopper.stopHopper();
+        m_feeder.stop();
     
     }
 
     @Override
     public boolean isFinished() {
-        if(time.get()>2){
+        if(time.get()>3){
             time.stop();
             return true;
         }

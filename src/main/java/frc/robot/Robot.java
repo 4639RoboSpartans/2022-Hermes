@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.m_shroud.resetEncoder();
+    // m_robotContainer.m_shroud.resetEncoder();
     m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("TurretEncoder", m_robotContainer.m_turret.getTurretRot());
     SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
     SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
-    SmartDashboard.putNumber("LLPitch", m_robotContainer.m_LL.getAngleY());
+    SmartDashboard.putNumber("LLP-itch", m_robotContainer.m_LL.getAngleY());
     SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
   }
 

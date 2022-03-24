@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -33,9 +34,9 @@ public class VisionAimCommand extends CommandBase {
     double limelightLensHeightInches = 23.5;
     double goalHeightInches = 104.0;
     PIDController PIDVTurret = new PIDController(0.035, 0.0002, 0);
-    PIDController PIDVShroud = new PIDController(0.00265, 0.0035, 0.0000);// 0.0014, 0.0044,0.00
+    PIDController PIDVShroud = new PIDController(0.0026, 0.006, 0.0000);// 0.0014, 0.0044,0.00
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.59406, 0.1132, 0.040239);
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
     private BangBangController shooterBang = new BangBangController(5);
 
     private OI m_oi;
@@ -66,42 +67,55 @@ public class VisionAimCommand extends CommandBase {
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         SmartDashboard.putNumber("Distance From Target", distanceFromLimelightToGoalInches);
-        double desiredPosition = -0.003*(Math.pow(distanceFromLimelightToGoalInches,2))+2.1423*distanceFromLimelightToGoalInches-136.6;
+        double desiredPosition = -0.0013*Math.pow(distanceFromLimelightToGoalInches,2) + 1.1982*distanceFromLimelightToGoalInches - 113.53;
         // -0.003*(Math.pow(distanceFromLimelightToGoalInches,2))+2.1423*distanceFromLimelightToGoalInches-116.6;
         //-0.0031 * Math.pow(distanceFromLimelightToGoalInches, 2)
         // + 2.4152 * distanceFromLimelightToGoalInches - 180;
 
-        double desiredSpeed = 4.0544*distanceFromLimelightToGoalInches+5700;
+        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3956.7;
         // 4.0544*distanceFromLimelightToGoalInches+5595.3;
         // -0.0045 * Math.pow(distanceFromLimelightToGoalInches, 2)
                 // + 8.6897 * distanceFromLimelightToGoalInches + 4550;
         SmartDashboard.putNumber("DesiredShroud Position", desiredPosition);
         SmartDashboard.putNumber("Desired Shooter Speed", desiredSpeed);
+        SmartDashboard.putNumber("Current Shooter Speed", m_shooter.getRate());
         if (m_oi.getAxis(1, Constants.Axes.RIGHT_TRIGGER) > 0.5) {
+            
             if (LL.LLTable.getEntry("tx").getDouble(0) != -1) {
                 SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
-                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed) *8000
-                        + 0.0006 * feedforward.calculate(desiredSpeed));
+                
+                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed)*1000000   
+                       + feedforward.calculate(desiredSpeed)*0.00043);
             } else {
                 SmartDashboard.putBoolean("Shooter", false);
             }
-            if (m_shooter.getRate() > 1.15 * desiredSpeed) {
+            // Constants.pushballs = true;
+            if (m_shooter.getRate() > desiredSpeed) {
                 Constants.pushballs = true;
             } else {
                 Constants.pushballs = false;
             }
         } else {
-            m_shooter.setShooter(
-                    shooterBang.calculate(m_shooter.getRate(), 3000) * 1 +0.0007*feedforward.calculate(3000) );//0.0007 * feedforward.calculate(2500)
+if(!DriverStation.isAutonomous())   {
+            m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 2000)  +0.0007*(feedforward.calculate(2000)) );
+            
+            // shooterBang.calculate(m_shooter.getRate(), 3000) * 1 +0.0007*feedforward.calculate(3000) );//0.0007 * feedforward.calculate(2500)
             m_turret.stopTurret();
+            // m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), 150));
             m_shroud.stopShroud();
             // m_feeder.stop();
             // m_hopper.stopHopper();
         }
+    else{
+        m_shooter.stopShooter();
+        m_turret.stopTurret();
+        m_shroud.stopShroud();
+    }
 
     }
+}
 
     public boolean targetVisible() {
         if (LL.LLTable.getEntry("tv").getDouble(0) == 1) {

@@ -11,6 +11,8 @@ public class FeederSubsystem extends SubsystemBase{
     public FeederSubsystem(){
         feederMotor.configFactoryDefault();
         feederMotor.setNeutralMode(NeutralMode.Coast);
+        feederMotor.configVoltageCompSaturation(12);
+        feederMotor.enableVoltageCompensation(true);
     }
     public void setFeeder(double speed){
         feederMotor.set(-speed);
