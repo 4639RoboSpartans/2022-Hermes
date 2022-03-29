@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -20,6 +21,11 @@ public class ExtendIntake extends CommandBase {
      public IntakeSubsystem m_intake;
      public HopperSubsystem m_hopper;
      Timer time;
+
+     public ExtendIntake(RobotContainer r){
+         this(r.m_intake, r.m_hopper);
+     }
+
     public ExtendIntake(IntakeSubsystem m_intake, HopperSubsystem m_hopper) {
         this.m_hopper=m_hopper;
         this.m_intake=m_intake;

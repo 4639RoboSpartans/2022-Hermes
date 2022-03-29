@@ -32,7 +32,7 @@ public class IntakeCommand extends CommandBase{
         if(m_oi.getAxis(1, Constants.Axes.RIGHT_TRIGGER)>0&&Constants.pushballs){
             m_intake.setIntake(0.7);
             m_hopper.setHopper(0.7);
-            m_feeder.setFeeder(0.65);
+            m_feeder.setFeeder(0.5);
         }
         else{
             m_intake.setIntake(0.7);

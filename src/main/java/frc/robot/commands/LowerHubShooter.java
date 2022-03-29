@@ -52,7 +52,6 @@ public class LowerHubShooter extends CommandBase{
                     m_feeder.setFeeder(0.60);
                     m_hopper.setHopper(0.5);
                     m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), 200));
-            
         }else{
             m_feeder.stop();
             m_hopper.stopHopper();

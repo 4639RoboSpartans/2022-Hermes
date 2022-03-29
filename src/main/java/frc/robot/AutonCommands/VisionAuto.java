@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -37,13 +38,18 @@ public class VisionAuto extends CommandBase {
     double limelightLensHeightInches = 23.5;
     double goalHeightInches = 104.0;
     PIDController PIDVTurret = new PIDController(0.035, 0.0002, 0);
-    PIDController PIDVShroud = new PIDController(0.0026, 0.006, 0.0000);// 0.0014, 0.0044,0.00
+    PIDController PIDVShroud = new PIDController(0.0026 , 0.007, 0.0000);// 0.0014, 0.0044,0.00
 
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
     private BangBangController shooterBang = new BangBangController(5);
 
     private OI m_oi;
     Timer time;
+
+    public VisionAuto(RobotContainer r){
+        this(r.m_LL, r.m_turret, r.m_shroud, r.m_shooter, r.m_oi, r.m_feeder, r.m_hopper);
+    }
+
     public VisionAuto(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud,
             ShooterSubsystem m_shooter, OI m_oi, FeederSubsystem m_feeder, HopperSubsystem m_hopper) {
         this.LL = LL;
@@ -81,7 +87,7 @@ public class VisionAuto extends CommandBase {
         //-0.0031 * Math.pow(distanceFromLimelightToGoalInches, 2)
         // + 2.4152 * distanceFromLimelightToGoalInches - 180;
 
-        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3826.7;
+        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3796.7;
         // 4.0544*distanceFromLimelightToGoalInches+5595.3;
         // -0.0045 * Math.pow(distanceFromLimelightToGoalInches, 2)
                 // + 8.6897 * distanceFromLimelightToGoalInches + 4550;
@@ -90,8 +96,8 @@ public class VisionAuto extends CommandBase {
                 SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
-                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed)*1000000
-                + feedforward.calculate(desiredSpeed)*0.00042);
+                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4550)
+                + feedforward.calculate(desiredSpeed)*0.00043);
             } else {
                 SmartDashboard.putBoolean("Shooter", false);
             }
@@ -125,7 +131,7 @@ public class VisionAuto extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(time.get()>3){
+        if(time.get()>5){
             time.stop();
             return true;
         }

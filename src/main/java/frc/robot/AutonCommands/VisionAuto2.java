@@ -37,8 +37,7 @@ public class VisionAuto2 extends CommandBase {
     double limelightLensHeightInches = 23.5;
     double goalHeightInches = 104.0;
     PIDController PIDVTurret = new PIDController(0.035, 0.0002, 0);
-    PIDController PIDVShroud = new PIDController(0.0026, 0.006, 0.0000);// 0.0014, 0.0044,0.00
-
+    PIDController PIDVShroud = new PIDController(0.0026 , 0.007, 0.0000);// 0.0014, 0.0044,0.00
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
     private BangBangController shooterBang = new BangBangController(5);
 
@@ -81,7 +80,7 @@ public class VisionAuto2 extends CommandBase {
         //-0.0031 * Math.pow(distanceFromLimelightToGoalInches, 2)
         // + 2.4152 * distanceFromLimelightToGoalInches - 180;
 
-        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3826.7;
+        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3796.7;
         // 4.0544*distanceFromLimelightToGoalInches+5595.3;
         // -0.0045 * Math.pow(distanceFromLimelightToGoalInches, 2)
                 // + 8.6897 * distanceFromLimelightToGoalInches + 4550;
@@ -90,8 +89,10 @@ public class VisionAuto2 extends CommandBase {
                 SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
-                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), desiredSpeed)*1000000
+                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4600)
                        + feedforward.calculate(desiredSpeed)*0.00045);
+                // m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4800)
+                // + feedforward.calculate(desiredSpeed)*0.00043);
             } else {
                 SmartDashboard.putBoolean("Shooter", false);
             }
