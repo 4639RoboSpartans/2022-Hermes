@@ -4,37 +4,9 @@
 
 package frc.robot;
 
-import frc.robot.AutonCommands.ExtendIntake;
-import frc.robot.AutonCommands.ExtendIntake2;
-import frc.robot.AutonCommands.ExtendIntakeRetract;
-import frc.robot.AutonCommands.IntakeRetract;
-import frc.robot.AutonCommands.ShooterAuto;
-import frc.robot.AutonCommands.ShooterAuto2;
-import frc.robot.AutonCommands.VisionAuto;
-import frc.robot.AutonCommands.VisionAuto2;
-import frc.robot.commands.ClimberBackwardCommand;
-import frc.robot.commands.ClimberForwardCommand;
-import frc.robot.commands.ClimberLeftBackward;
-import frc.robot.commands.ClimberLeftForward;
-import frc.robot.commands.ClimberRightBackward;
-import frc.robot.commands.ClimberRightForward;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.LowerHubShooter;
-import frc.robot.commands.OutTakeCommand;
-import frc.robot.commands.ShooterCommand;
-import frc.robot.commands.TurretCommand;
-import frc.robot.commands.TurretCommandR;
-import frc.robot.commands.VisionAimCommand;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.FeederSubsystem;
-import frc.robot.subsystems.HopperSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.ShroudSubsystem;
-import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.AutonCommands.*;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -97,7 +69,7 @@ public class RobotContainer {
   public ShooterAuto  autonShooter = new ShooterAuto(m_shooter, m_LL, m_feeder, m_hopper);
   public VisionAuto autonVision = new VisionAuto(m_LL, m_turret, m_shroud,m_shooter, m_oi, m_feeder, m_hopper);
   public ShooterAuto2  autonShooter2 = new ShooterAuto2(m_shooter, m_LL, m_feeder, m_hopper);
-  public VisionAuto2 autonVision2 = new VisionAuto2(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper);
+  public VisionAuto autonVision2 = new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper);
 
   
   private String path11;
@@ -123,6 +95,10 @@ public class RobotContainer {
   Trajectory traj31 = new Trajectory();
   Trajectory traj32 = new Trajectory();
   Trajectory traj33 = new Trajectory();
+
+  AutonPath aPath11, aPath12, aPath13;
+  AutonPath aPath21, aPath22, aPath23;
+  AutonPath aPath31, aPath32, aPath33;
 
   public RobotContainer() {
     path11 = "paths/path1part1.wpilib.json";
@@ -163,6 +139,20 @@ public class RobotContainer {
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
     }
+
+    aPath11 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
+    aPath12 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
+    aPath13 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+
+    aPath21 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
+    aPath22 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
+    aPath23 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+
+    aPath31 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
+    aPath32 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
+    aPath33 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+
+
     configureButtonBindings();
   }
 
@@ -183,7 +173,7 @@ public class RobotContainer {
     m_oi.getButton(0, Constants.Buttons.A_BUTTON).whileHeld(ClimberRF);
     m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whileHeld(ClimberLB);
     m_oi.getButton(0, Constants.Buttons.RIGHT_BUMPER).whileHeld(ClimberRB);
-    m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(LowerHubShooter);
+    // m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(LowerHubShooter);
   }
 
   public Command getAutonomousCommand() {
@@ -357,7 +347,7 @@ m_drive);
     //  .andThen(ramseteCommand23)
     //  .andThen(() ->m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
 //path3
-
+// return null;
 
 //path3 19in from left corner, 4 inch from front bar 39 inches from ball
 m_drive.resetOdometry(traj31.getInitialPose());
@@ -367,7 +357,46 @@ m_drive.resetOdometry(traj31.getInitialPose());
     m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
     m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
 
-    
+      //New Path #1 using pathplanner
+      // m_drive.resetOdometry(aPath11.getTrajectory().getInitialPose());
+      // return new ParallelCommandGroup(new ExtendIntake(this), aPath11.getRameseteCommand(m_drive))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(new VisionAuto(this))
+      //   .andThen(new ParallelCommandGroup(new IntakeRetract(this), aPath12.getRameseteCommand(m_drive)))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(aPath13.getRameseteCommand(m_drive))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(new VisionAuto(this))
+      //   .andThen(new ExtendIntake(this))
+      //   .andThen(new VisionAuto(this))
+      // ;
+
+      //New Path #2 using pathplanner
+      // m_drive.resetOdometry(aPath21.getTrajectory().getInitialPose());
+      // return new ParallelCommandGroup(new ExtendIntake(this), aPath21.getRameseteCommand(m_drive))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(new VisionAuto(this))
+      //   .andThen(new ParallelCommandGroup(new IntakeRetract(this), aPath22.getRameseteCommand(m_drive)))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(aPath23.getRameseteCommand(m_drive))
+      //   .andThen(()->m_drive.tankDriveVolts(0,0))
+      //   .andThen(new VisionAuto(this))
+      //   .andThen(new ExtendIntake(this))
+      //   .andThen(new VisionAuto(this))
+      // ;
+
+      //New Path #3 using pathplanner
+      // m_drive.resetOdometry(aPath31.getTrajectory().getInitialPose());
+      // return new ParallelCommandGroup(new ExtendIntake(this), aPath31.getRameseteCommand(m_drive))
+      //     .andThen(()->m_drive.tankDriveVolts(0,0))
+      //     .andThen(new VisionAuto(this))
+      //     .andThen(new ParallelCommandGroup(new IntakeRetract(this), aPath32.getRameseteCommand(m_drive)))
+      //     .andThen(()->m_drive.tankDriveVolts(0,0))
+      //     .andThen(aPath33.getRameseteCommand(m_drive))
+      //     .andThen(new VisionAuto(this))
+      // ;
+
+
    //test
   //  return ramseteCommand11;
   }
