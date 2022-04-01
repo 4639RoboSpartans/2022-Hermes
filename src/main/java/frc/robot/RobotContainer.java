@@ -167,6 +167,10 @@ public class RobotContainer {
     // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
     // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(LL);
     // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
+    
+    m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(()->m_climber.extendPistons());
+    m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(()->m_climber.retractPistons());
+
     m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(climberforward);
     m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(climberbackward);
     m_oi.getButton(0, Constants.Buttons.X_BUTTON).whileHeld(ClimberLF);
