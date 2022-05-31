@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -15,6 +16,11 @@ public class OutTakeCommand extends CommandBase{
         this.m_feeder =m_feeder;
         addRequirements(m_intake, m_hopper, m_feeder);
     }
+
+    public OutTakeCommand(RobotContainer rc){
+        this(rc.m_intake, rc.m_hopper, rc.m_feeder);
+    }
+
     @Override
     public void initialize(){
         m_intake.setIntake(0);

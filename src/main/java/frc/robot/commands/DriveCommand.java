@@ -9,8 +9,8 @@ import frc.robot.subsystems.DriveSubsystem;
 public class DriveCommand extends CommandBase {
     private DriveSubsystem m_drive;
     private OI oi;
-    private final SlewRateLimiter speedLimiter = new SlewRateLimiter(10);//5
-	private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(10);
+    private final SlewRateLimiter speedLimiter = new SlewRateLimiter(12);//8
+	private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(5);
     public DriveCommand(DriveSubsystem m_drive, OI oi) {
         this.m_drive = m_drive;
         this.oi = oi;
@@ -25,7 +25,10 @@ public class DriveCommand extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.arcadeDrive(speedLimiter.calculate(-oi.getAxis(0, Constants.Axes.LEFT_STICK_Y))*0.65,
+        Constants.leftRate = m_drive.getLeftEncoderRate();
+        Constants.rightRate = m_drive.getRightEncoderRate();
+        
+        m_drive.arcadeDrive(speedLimiter.calculate(-oi.getAxis(0, Constants.Axes.LEFT_STICK_Y))*0.65,//0.65
 				rotationLimiter.calculate(-oi.getAxis(0, Constants.Axes.RIGHT_STICK_X) )
 						* Constants.ROTATION_SENSITIVITY);
     }

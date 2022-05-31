@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -29,22 +30,32 @@ public class VisionAuto2 extends CommandBase {
     private FeederSubsystem m_feeder;
     private HopperSubsystem m_hopper;
 
-    public double LLHeight = 23.5;
-    public double TargetHeight = 104;// inches
-    public double LLAngle = 33;
+    private IntakeSubsystem m_intake;
+    private boolean runningIntake = false;
 
-    double limelightMountAngleDegrees = 33.0;
-    double limelightLensHeightInches = 23.5;
+    public double LLHeight = 35;
+    public double TargetHeight = 104;// inches
+    public double LLAngle = 25;
+
+    double limelightMountAngleDegrees = 25.0;
+    double limelightLensHeightInches = 35;
     double goalHeightInches = 104.0;
-    PIDController PIDVTurret = new PIDController(0.035, 0.0002, 0);
-    PIDController PIDVShroud = new PIDController(0.0026 , 0.007, 0.0000);// 0.0014, 0.0044,0.00
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
+    PIDController PIDVTurret = new PIDController(0.4, 0.0004, 0);//.035
+    PIDController PIDVShroud = new PIDController(0.005 , 0.012, 0.0000);// 0.0015, 0.012
+
+    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.7591 , 0.13571, 0.035856);//new
+    // private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.60213, 0.12494, 0.043843);
     private BangBangController shooterBang = new BangBangController(5);
+    // private PIDController shooterPID = new PIDController(1.6, 0.015, 0);//1.511
+       
 
     private OI m_oi;
     Timer time;
+
+
+
     public VisionAuto2(LimeLightSubsystem LL, TurretSubsystem m_turret, ShroudSubsystem m_shroud,
-            ShooterSubsystem m_shooter, OI m_oi, FeederSubsystem m_feeder, HopperSubsystem m_hopper) {
+            ShooterSubsystem m_shooter, OI m_oi, FeederSubsystem m_feeder, HopperSubsystem m_hopper, IntakeSubsystem m_intake, boolean runningIntake) {
         this.LL = LL;
         this.m_turret = m_turret;
         this.m_shroud = m_shroud;
@@ -52,10 +63,12 @@ public class VisionAuto2 extends CommandBase {
         this.m_feeder = m_feeder;
         this.m_hopper = m_hopper;
         this.m_oi = m_oi;
+        this.m_intake = m_intake;
+        this.runningIntake = runningIntake;
         PIDVTurret.setTolerance(0);
         PIDVShroud.setTolerance(5);
         time = new Timer();
-        addRequirements(LL, m_turret, m_shroud, m_shooter, m_feeder, m_hopper);
+        addRequirements(LL, m_turret, m_shroud, m_shooter, m_feeder, m_hopper, m_intake);
     }
 
     @Override
@@ -65,44 +78,88 @@ public class VisionAuto2 extends CommandBase {
         m_shooter.setShooter(0);
         m_feeder.setFeeder(0);
         m_hopper.setHopper(0);
+        m_intake.setIntake(0);
+        if(runningIntake){
+            m_intake.extendPistons();
+        }
         time.start();
     }
 
     @Override
     public void execute() {
-        double targetOffsetAngle_Vertical = LL.LLTable.getEntry("ty").getDouble(0.0);
-        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+        double targetOffsetAngle_Vertical=0;
+        double angleToGoalDegrees=0;
+        double angleToGoalRadians=0 ;
+        double distanceFromLimelightToGoalInches=0;
+        double desiredPosition=0;
+        double desiredSpeed=0;
+        double HorizontalOffset=0;
+        
+            HorizontalOffset = LL.LLTable.getEntry("tx").getDouble(0);
+            targetOffsetAngle_Vertical = LL.LLTable.getEntry("ty").getDouble(0.0);
+        angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+        angleToGoalRadians= angleToGoalDegrees * (3.14159 / 180.0);
+        // if(Math.abs(LL.LLTable.getEntry("tx").getDouble(0))>5){
+        distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+        // }
         SmartDashboard.putNumber("Distance From Target", distanceFromLimelightToGoalInches);
-        double desiredPosition = -0.0013*Math.pow(distanceFromLimelightToGoalInches,2) + 1.1982*distanceFromLimelightToGoalInches - 113.53;
-        // -0.003*(Math.pow(distanceFromLimelightToGoalInches,2))+2.1423*distanceFromLimelightToGoalInches-116.6;
-        //-0.0031 * Math.pow(distanceFromLimelightToGoalInches, 2)
-        // + 2.4152 * distanceFromLimelightToGoalInches - 180;
-
-        double desiredSpeed = 0.0004*Math.pow(distanceFromLimelightToGoalInches,2) + 2.2362*distanceFromLimelightToGoalInches + 3796.7;
+        desiredPosition= -0.0016*Math.pow(distanceFromLimelightToGoalInches,2) + 1.4015*distanceFromLimelightToGoalInches - 158.25;
+        // desiredPosition= -0.0016*Math.pow(distanceFromLimelightToGoalInches,2) + 1.4015*distanceFromLimelightToGoalInches - 130.25;
         // 4.0544*distanceFromLimelightToGoalInches+5595.3;
         // -0.0045 * Math.pow(distanceFromLimelightToGoalInches, 2)
                 // + 8.6897 * distanceFromLimelightToGoalInches + 4550;
       
             if (LL.LLTable.getEntry("tx").getDouble(0) != -1) {
                 SmartDashboard.putNumber("VAlue", -PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
-                m_turret.setTurret(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
                 m_shroud.setShroud(PIDVShroud.calculate(m_shroud.getShroudPosition(), desiredPosition));
-                m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4600)
-                       + feedforward.calculate(desiredSpeed)*0.00045);
-                // m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4800)
+                
+                m_turret.setTurretVolt(-PIDVTurret.calculate(LL.LLTable.getEntry("tx").getDouble(0), 0));
+                // else
+                // m_turret.setTurret(0);
+                // desiredPosition=160;
+                // desiredSpeed=42;
+                // desiredPosition = 50;
+                double sped;
+                if(distanceFromLimelightToGoalInches>290){
+                    desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 32);
+                    sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed)+ (feedforward.calculate(desiredSpeed)*1.1/12);
+                }else if(distanceFromLimelightToGoalInches<162){
+                    desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 21);
+                    sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed+5)+ (feedforward.calculate(desiredSpeed+5)*1.1/12);
+                }else{
+                    
+                desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 25);
+                sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed)+ (feedforward.calculate(desiredSpeed)*1.2/12);
+                // if(distanceFromLimelightToGoalInches>290){
+                //     desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 31.5);
+                //     sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed)+ (feedforward.calculate(desiredSpeed)/12);
+                // }else if(distanceFromLimelightToGoalInches<162){
+                //     desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 23.5);
+                //     sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed+5)+ (feedforward.calculate(desiredSpeed+5)/12);
+                // }else{
+                    
+                // desiredSpeed= Math.min(38,0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) - 0.0094*distanceFromLimelightToGoalInches+ 30.5);
+                // sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed)+ (feedforward.calculate(desiredSpeed)/12);
+                // }
+                }
+                m_shooter.setShooter(sped);
+                // m_shooter.setShooter(shooterBang.calculate(m_shooter.getRate(), 4550)
                 // + feedforward.calculate(desiredSpeed)*0.00043);
-            } else {
-                SmartDashboard.putBoolean("Shooter", false);
+                
+            
+            if(runningIntake){
+                m_intake.setIntake(0.7);
+            }else{
+                m_intake.setIntake(0);
             }
-            if (m_shooter.getRate() >desiredSpeed) {
+            if ((m_shooter.getRate()/2048)*10 > desiredSpeed) {
                 m_hopper.setHopper(0.7);
                 m_feeder.setFeeder(0.6);
             } else{
                 m_hopper.setHopper(0);
                 m_feeder.setFeeder(0);
             }
+        }
         
 
     }
@@ -126,7 +183,7 @@ public class VisionAuto2 extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(time.get()>2.8){
+        if(time.get()>2){
             time.stop();
             return true;
         }

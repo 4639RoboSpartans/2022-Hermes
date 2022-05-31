@@ -28,10 +28,18 @@ public final class Constants {
 	public static final int LClimberMotor=11;
 	public static final int RClimberMotor=12;
 
+	public static boolean climbing=false;
+
 	public static final int ForwardPiston= 1;
 	public static final int BackwardPiston =2;
 
 	public static final int feederSensor=1;
+
+	public static final double climberspeeed = 0.9;
+
+	public static double leftRate = 0;
+	public static double rightRate = 0;
+	public static boolean moveshoot=false;
 
 	//Subject to change
 	public static final double ksVolts=0.69874;//0.66099;
@@ -45,17 +53,17 @@ public final class Constants {
         new DifferentialDriveKinematics(kTrackwidthMeters);
 	public static final double kMaxSpeedMetersPerSecond = 3.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
-	public static final double kRamseteB = 15;//2
-    public static final double kRamseteZeta = 7;//0.7
+	public static final double kRamseteB = 3.5;//2 3.5
+    public static final double kRamseteZeta = 5;//0.7
 
 public static boolean pushballs = false;
 
-
+public static boolean turning = true;
 
     public static final double DEADZONE_VALUE = 0.01;
 	public static final int NUMBER_OF_CONTROLLERS = 2;
 
-	public static final double ROTATION_SENSITIVITY = 0.7;//0.75
+	public static final double ROTATION_SENSITIVITY = 0.85;//0.75
     
     public enum Axes {
 		LEFT_STICK_X(0), LEFT_STICK_Y(4), LEFT_TRIGGER(2), RIGHT_TRIGGER(3), RIGHT_STICK_X(1), RIGHT_STICK_Y(5);

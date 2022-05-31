@@ -36,7 +36,7 @@ public class ExtendIntake extends CommandBase {
     @Override
     public void initialize() {
         time.start();
-        m_intake.retractPistons();
+        m_intake.extendPistons();
         
     }
     @Override 

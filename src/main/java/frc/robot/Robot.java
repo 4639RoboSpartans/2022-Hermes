@@ -58,10 +58,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    // SmartDashboard.putNumber("leftside", Constants.leftRate);
+    // SmartDashboard.putNumber("rightside", Constants.rightRate);
+    // SmartDashboard.putBoolean("MovingShoot", Constants.moveshoot);
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    SmartDashboard.putNumber("Heading", m_robotContainer.m_drive.getHeading());
+    SmartDashboard.putNumber("TurretPos", m_robotContainer.m_turret.getTurretRot());
+    SmartDashboard.putNumber("X Dis", m_robotContainer.m_drive.getXOffset());
+    SmartDashboard.putNumber("Y Dis", m_robotContainer.m_drive.getYOffset());
+    SmartDashboard.putNumber("DegToTurn", m_robotContainer.m_drive.degToTurn());
+    SmartDashboard.putBoolean("ButtonPushed", m_robotContainer.m_oi.getButton(0, Constants.Buttons.RIGHT_BUMPER).get());
+    SmartDashboard.putNumber("Shroud", m_robotContainer.m_shroud.getShroudPosition());
     CommandScheduler.getInstance().run();
   }
 
@@ -81,7 +91,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    
+    m_robotContainer.m_shroud.resetEncoder();
     m_robotContainer.m_drive.resetEncoders();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
@@ -103,11 +113,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // m_robotContainer.m_shroud.resetEncoder();
+    m_robotContainer.m_climber.extendPistons();
     m_robotContainer.m_drive.BackRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
+    Constants.climbing = false;
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -122,16 +134,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("leftEncoder", m_robotContainer.m_drive.getLeftEncoderPosition());
-    SmartDashboard.putNumber("rightEncoder", m_robotContainer.m_drive.getRightEncoderPosition());
-    SmartDashboard.putNumber("X displacement", m_robotContainer.m_drive.getNavx().getDisplacementX());
-    SmartDashboard.putNumber("Z displacement", m_robotContainer.m_drive.getNavx().getDisplacementZ());
-    SmartDashboard.putNumber("Shroud Encoder", m_robotContainer.m_shroud.getShroudPosition());
-    SmartDashboard.putNumber("TurretEncoder", m_robotContainer.m_turret.getTurretRot());
-    SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
-    SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
-    SmartDashboard.putNumber("LLP-itch", m_robotContainer.m_LL.getAngleY());
-    SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
+    // SmartDashboard.putNumber("leftEncoder", m_robotContainer.m_drive.getLeftEncoderPosition());
+    // SmartDashboard.putNumber("rightEncoder", m_robotContainer.m_drive.getRightEncoderPosition());
+    // SmartDashboard.putNumber("X displacement", m_robotContainer.m_drive.getNavx().getDisplacementX());
+    // SmartDashboard.putNumber("Z displacement", m_robotContainer.m_drive.getNavx().getDisplacementZ());
+    // SmartDashboard.putNumber("Shroud Encoder", m_robotContainer.m_shroud.getShroudPosition());
+    // SmartDashboard.putNumber("TurretEncoder", m_robotContainer.m_turret.getTurretRot());
+    // SmartDashboard.putNumber("ShooterRate", m_robotContainer.m_shooter.getRate());
+    // SmartDashboard.putNumber("LLYaw", m_robotContainer.m_LL.LLTable.getEntry("tx").getDouble(0));
+    // SmartDashboard.putNumber("LLP-itch", m_robotContainer.m_LL.getAngleY());
+    // SmartDashboard.putBoolean("TargetFound", m_robotContainer.m_LL.targetVisible());
+    // SmartDashboard.putNumber("TurretRotation", m_robotContainer.m_turret.getTurretRot());
   }
 
   @Override

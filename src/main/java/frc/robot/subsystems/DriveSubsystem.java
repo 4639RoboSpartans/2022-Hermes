@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -45,8 +47,11 @@ public class DriveSubsystem extends SubsystemBase {
         m_drive.setSafetyEnabled(false);
 
         m_odometry = new DifferentialDriveOdometry(navx.getRotation2d());
+        navx.setAngleAdjustment(-140);
+
     }
 
+    //8.2,4.2
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
@@ -61,7 +66,24 @@ public class DriveSubsystem extends SubsystemBase {
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
     }
-
+    public double getXOffset(){
+        return getPose().getX()-4.2;
+    }
+    public double getYOffset(){
+        return getPose().getY()-8.2;
+    }
+    public double degToTurn(){
+        if(getXOffset()>0&&getYOffset()>0){
+            return 180+Math.toDegrees(Math.atan(getYOffset()/getXOffset()));
+        }else if(getXOffset()<0&&getYOffset()>0){
+            return 360+Math.toDegrees(Math.atan(getYOffset()/getXOffset()));
+        }else if(getXOffset()<0&&getYOffset()<0){
+            return Math.toDegrees(Math.atan(getYOffset()/getXOffset()));
+        }else if(getXOffset()>0&&getYOffset()<0){
+            return 180-Math.toDegrees(Math.atan(getYOffset()/getXOffset()));
+        }
+        return 0;
+    }
 
     public void resetEncoders(){
         FrontLeft.setSelectedSensorPosition(0);
@@ -72,6 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         m_odometry.resetPosition(pose, navx.getRotation2d());
+        
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
@@ -94,7 +117,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return navx.getRotation2d().getDegrees();
+        if(navx.getRotation2d().getDegrees()%360<0){
+            return (navx.getRotation2d().getDegrees()%360)+360;
+        }
+        return navx.getRotation2d().getDegrees()%360;
     }
 
     public double getTurnRate() {
@@ -110,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public double getYDisplacement() {
-        return navx.getDisplacementZ();
+        return navx.getDisplacementY();
     }
 
     public void arcadeDrive(double speed, double rotation) {

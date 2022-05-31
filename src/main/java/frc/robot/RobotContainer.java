@@ -28,6 +28,7 @@ import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstrai
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -52,7 +53,7 @@ public class RobotContainer {
   public IntakeCommand intake = new IntakeCommand(m_intake, m_hopper, m_feeder, m_oi);
   public OutTakeCommand outtake = new OutTakeCommand(m_intake, m_hopper, m_feeder);
   public ShooterCommand shooter = new ShooterCommand(m_shooter, m_LL, m_feeder, m_hopper);
-  public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud, m_shooter,  m_oi);
+  public VisionAimCommand LL = new VisionAimCommand(m_LL, m_turret, m_shroud, m_shooter, m_oi,m_feeder,m_hopper);
   public ClimberForwardCommand climberforward = new ClimberForwardCommand(m_climber);
   public ClimberBackwardCommand climberbackward = new ClimberBackwardCommand(m_climber);
   public ClimberRightForward ClimberRF = new ClimberRightForward(m_climber);
@@ -64,12 +65,16 @@ public class RobotContainer {
 
   public ExtendIntake EIntake = new ExtendIntake(m_intake, m_hopper);
   public ExtendIntake2 EIntake2 = new ExtendIntake2(m_intake, m_hopper);
+  public NIntake nintake = new NIntake(m_intake, m_hopper,2,0);
+  public NIntake n2intake = new NIntake(m_intake, m_hopper,3.5,0);
+  public NIntake n3intake = new NIntake(m_intake, m_hopper,3.5,0);
   public IntakeRetract IntakeR = new IntakeRetract(m_intake, m_hopper);
   public ExtendIntakeRetract EIntakeR=new ExtendIntakeRetract(m_intake, m_hopper);
   public ShooterAuto  autonShooter = new ShooterAuto(m_shooter, m_LL, m_feeder, m_hopper);
-  public VisionAuto autonVision = new VisionAuto(m_LL, m_turret, m_shroud,m_shooter, m_oi, m_feeder, m_hopper);
+  public VisionAuto autonVision = new VisionAuto(m_LL, m_turret, m_shroud,m_shooter, m_oi, m_feeder, m_hopper, m_intake, false, 2);
   public ShooterAuto2  autonShooter2 = new ShooterAuto2(m_shooter, m_LL, m_feeder, m_hopper);
-  public VisionAuto autonVision2 = new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper);
+  public VisionAuto autonVision2 = new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper, m_intake,true,4);
+  public   SendableChooser<String> m_chooser = new SendableChooser<>();
 
   
   private String path11;
@@ -82,6 +87,7 @@ public class RobotContainer {
   private String path31;
   private String path32;
   private String path33;
+  private String path34;
 
   Trajectory traj11 = new Trajectory();
   Trajectory traj12 = new Trajectory();
@@ -95,12 +101,23 @@ public class RobotContainer {
   Trajectory traj31 = new Trajectory();
   Trajectory traj32 = new Trajectory();
   Trajectory traj33 = new Trajectory();
+  Trajectory traj34 = new Trajectory();
 
   AutonPath aPath11, aPath12, aPath13;
   AutonPath aPath21, aPath22, aPath23;
   AutonPath aPath31, aPath32, aPath33;
+  AutonPath aPath41, aPath42;
+
+  Command path1,path2,path3,test;
 
   public RobotContainer() {
+    m_chooser.setDefaultOption("Climber5", "3L");
+    m_chooser.addOption("Climber2", "3S");
+    m_chooser.addOption("Climber4", "3M");  
+    m_chooser.addOption("Middle4", "2M");
+    m_chooser.addOption("Middle2", "2S");
+    SmartDashboard.putData(m_chooser);
+
     path11 = "paths/path1part1.wpilib.json";
     path12 = "paths/path1part2.wpilib.json";
     path13 = "paths/path1part3.wpilib.json";
@@ -113,6 +130,7 @@ public class RobotContainer {
     path31 = "paths/path3part1.wpilib.json";
     path32 = "paths/path3part2.wpilib.json";
     path33=   "paths/path3part3.wpilib.json";
+    path34=   "paths/path3part4.wpilib.json";
     try {
       Path trajectoryPath11 = Filesystem.getDeployDirectory().toPath().resolve(path11);
       traj11 = TrajectoryUtil.fromPathweaverJson(trajectoryPath11);
@@ -136,21 +154,26 @@ public class RobotContainer {
       traj32 = TrajectoryUtil.fromPathweaverJson(trajectoryPath2);
       Path trajectoryPath3 = Filesystem.getDeployDirectory().toPath().resolve(path33);
       traj33 = TrajectoryUtil.fromPathweaverJson(trajectoryPath3);
+      Path trajectoryPath4 = Filesystem.getDeployDirectory().toPath().resolve(path34);
+      traj34 = TrajectoryUtil.fromPathweaverJson(trajectoryPath4);
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + path31, ex.getStackTrace());
     }
+    m_drive.resetOdometry(traj31.getInitialPose());
+    aPath11 = new AutonPath("pathplanner/generatedJSON/Path1Part1.wpilib.json");
+    aPath12 = new AutonPath("pathplanner/generatedJSON/Path1Part2.wpilib.json");
+    aPath13 = new AutonPath("pathplanner/generatedJSON/Path1Part3.wpilib.json");
 
-    aPath11 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
-    aPath12 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
-    aPath13 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+    aPath21 = new AutonPath("pathplanner/generatedJSON/Path2Part1.wpilib.json");
+    aPath22 = new AutonPath("pathplanner/generatedJSON/Path2Part2.wpilib.json");
+    aPath23 = new AutonPath("pathplanner/generatedJSON/Path2Part3.wpilib.json");
 
-    aPath21 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
-    aPath22 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
-    aPath23 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+    aPath31 = new AutonPath("pathplanner/generatedJSON/Path3Part1.wpilib.json");
+    aPath32 = new AutonPath("pathplanner/generatedJSON/Path3Part2.wpilib.json");
+    aPath33 = new AutonPath("pathplanner/generatedJSON/Path3Part3.wpilib.json");
 
-    aPath31 = new AutonPath("pathplanner/JeneratedJSON/Path1Part1.wpilib.json");
-    aPath32 = new AutonPath("pathplanner/JeneratedJSON/Path1Part2.wpilib.json");
-    aPath33 = new AutonPath("pathplanner/JeneratedJSON/Path1Part3.wpilib.json");
+    aPath41 = new AutonPath("pathplanner/generatedJSON/Path4Part1.wpilib.json");
+    aPath42 = new AutonPath("pathplanner/generatedJSON/Path4Part2.wpilib.json");
 
 
     configureButtonBindings();
@@ -159,24 +182,27 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_drive.setDefaultCommand(drive);
     m_LL.setDefaultCommand(LL);
-    m_oi.getPovButton(1, 0).whenPressed(new RunCommand(() -> m_intake.extendPistons(), m_intake));
-    m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() -> m_intake.retractPistons(), m_intake));
+    m_oi.getPovButton(1, 180 ).whenPressed(new RunCommand(() -> m_intake.extendPistons(), m_intake));
+    m_oi.getPovButton(1, 0).whenPressed(new RunCommand(() -> m_intake.retractPistons(), m_intake));
     m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
     m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
     // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
     // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
-    // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(LL);
+    m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(LL);
     // m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(shooter);
-    
-    m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(()->m_climber.extendPistons());
-    m_oi.getButton(1, Constants.Buttons.B_BUTTON).whileHeld(()->m_climber.retractPistons());
+    m_oi.getPovButton(0, 180).whenPressed(new RunCommand(() -> m_climber.extendPistons(), m_climber));
+    m_oi.getPovButton(0, 0).whenPressed(new RunCommand(() -> m_climber.retractPistons(), m_climber));
 
-    m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(climberforward);
-    m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(climberbackward);
-    m_oi.getButton(0, Constants.Buttons.X_BUTTON).whileHeld(ClimberLF);
-    m_oi.getButton(0, Constants.Buttons.A_BUTTON).whileHeld(ClimberRF);
-    m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whileHeld(ClimberLB);
-    m_oi.getButton(0, Constants.Buttons.RIGHT_BUMPER).whileHeld(ClimberRB);
+    // m_oi.getButton(1, Constants.Buttons.Y_BUTTON).whileHeld(()->m_climber.extendPistons());
+    // m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(()->m_climber.retractPistons());
+
+    m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whileHeld(climberforward);
+    m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whenPressed(new RunCommand(()->m_shooter.startClimbing(), m_shooter));
+    m_oi.getButton(0, Constants.Buttons.RIGHT_BUMPER).whileHeld(climberbackward);
+    m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(ClimberLF);
+    m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(ClimberRF);
+    m_oi.getButton(0, Constants.Buttons.X_BUTTON).whileHeld(ClimberRB);
+    m_oi.getButton(0, Constants.Buttons.A_BUTTON).whileHeld(ClimberLB);
     // m_oi.getButton(1, Constants.Buttons.LEFT_BUMPER).whileHeld(LowerHubShooter);
   }
 
@@ -228,7 +254,7 @@ public class RobotContainer {
 
 
 RamseteCommand ramseteCommand21 = new RamseteCommand(
-        traj22,
+        traj21,
         m_drive::getPose,
         new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
         new SimpleMotorFeedforward(
@@ -243,7 +269,7 @@ RamseteCommand ramseteCommand21 = new RamseteCommand(
         m_drive);
 
 RamseteCommand ramseteCommand22= new RamseteCommand(
-traj23,
+traj22,
 m_drive::getPose,
 new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
 new SimpleMotorFeedforward(
@@ -258,7 +284,7 @@ m_drive::tankDriveVolts,
 m_drive);
 
 RamseteCommand ramseteCommand23= new RamseteCommand(
-traj24,
+traj23,
 m_drive::getPose,
 new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
 new SimpleMotorFeedforward(
@@ -332,36 +358,108 @@ m_drive);
       new PIDController(Constants.kPDriveVel, 0, 0),
       m_drive::tankDriveVolts,
       m_drive);
+
+      RamseteCommand ramseteCommand34 = new RamseteCommand(
+      traj34,
+      m_drive::getPose,
+      new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+      new SimpleMotorFeedforward(
+          Constants.ksVolts,
+          Constants.kvVoltSecondsPerMeter,
+          Constants.kaVoltSecondsSquaredPerMeter),
+      Constants.kDriveKinematics,
+      m_drive::getWheelSpeeds,
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      new PIDController(Constants.kPDriveVel, 0, 0),
+      m_drive::tankDriveVolts,
+      m_drive);
+
+      if(m_chooser.getSelected().equals("3L")){
+        m_drive.resetOdometry(traj31.getInitialPose());
+        return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() ->  
+            m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+            .andThen(new ParallelCommandGroup(n2intake, ramseteCommand32).andThen(() ->
+            m_drive.tankDriveVolts(0, 0)))
+            .andThen(new ParallelCommandGroup(n3intake, ramseteCommand33)).andThen(() ->
+            m_drive.tankDriveVolts(0, 0)).andThen(new ParallelCommandGroup(new StartEndCommand(()->m_drive.arcadeDrive(0,0.4), ()->m_drive.arcadeDrive(0,0), m_drive).withTimeout(1.7), autonVision2));
+      }else if(m_chooser.getSelected().equals("3S")){
+        m_drive.resetOdometry(traj31.getInitialPose());
+        return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() ->
+            m_drive.tankDriveVolts(0, 0)).andThen(autonVision);
+      }else if(m_chooser.getSelected().equals("3M")){
+        m_drive.resetOdometry(traj31.getInitialPose());
+        return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() ->  
+            m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+            .andThen(new ParallelCommandGroup(n2intake, ramseteCommand32).andThen(() ->
+            m_drive.tankDriveVolts(0, 0)))
+            .andThen(ramseteCommand34).andThen(autonVision2);
+      }else if(m_chooser.getSelected().equals("2S")){
+        nintake = new NIntake(m_intake, m_hopper,2.5,0);
+        m_drive.resetOdometry(traj21.getInitialPose());
+        return new ParallelCommandGroup(nintake, ramseteCommand21).andThen(() ->
+         m_drive.tankDriveVolts(0, 0)).andThen(autonVision);
+      }else if(m_chooser.getSelected().equals("2M")){
+        nintake = new NIntake(m_intake, m_hopper,2.5,0);
+        n2intake = new NIntake(m_intake, m_hopper,4,0);
+        m_drive.resetOdometry(traj21.getInitialPose());
+    return new ParallelCommandGroup(nintake, ramseteCommand21).andThen(() ->
+     m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+     .andThen(new ParallelCommandGroup(n2intake, ramseteCommand22))
+     .andThen(() ->m_drive.tankDriveVolts(0, 0))
+    .andThen(ramseteCommand23)
+      .andThen(() ->m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
+      }
+
+// return new ParallelCommandGroup(new StartEndCommand(()->m_drive.arcadeDrive(0,0.4), ()->m_drive.arcadeDrive(0,0), m_drive).withTimeout(1.7), autonVision2);
+
     //path1 19 inches from right corner, 5 inches from front
 
-    // m_drive.resetOdometry(traj11.getInitialPose());
-    // return new ParallelCommandGroup(EIntake2, ramseteCommand11).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(ramseteCommand12).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
-    //  .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand13).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
-    //       m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
-// return null;   
-    //path2 17 inch left corner
-    // m_drive.resetOdometry(traj21.getInitialPose());
-    //  return new ParallelCommandGroup(EIntake, ramseteCommand21).andThen(() ->
-    //  m_drive.tankDriveVolts(0, 0)).andThen(autonVision);
-    //  .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand22))
-    //  .andThen(() ->m_drive.tankDriveVolts(0, 0))
-    //  .andThen(ramseteCommand23)
-    //  .andThen(() ->m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
+//     m_drive.resetOdometry(traj11.getInitialPose());
+//  return new ParallelCommandGroup(nintake,ramseteCommand11).andThen(ramseteCommand12.andThen(ramseteCommand33.andThen(() ->m_drive.tankDriveVolts(0, 0))));
+
+    //path2 16 inch left corner
+//     m_drive.resetOdometry(traj21.getInitialPose());
+//     return new ParallelCommandGroup(nintake, ramseteCommand21).andThen(() ->
+//      m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+// .andThen(new ParallelCommandGroup(n2intake, ramseteCommand22))
+//      .andThen(() ->m_drive.tankDriveVolts(0, 0))
+//     .andThen(ramseteCommand24).andThen(() ->m_drive.tankDriveVolts(0, 0))
+//     .andThen(new ParallelCommandGroup(new StartEndCommand(()->m_drive.arcadeDrive(0,0.45), ()->m_drive.arcadeDrive(0,0), m_drive).withTimeout(1.2), autonVision2));
 //path3
 // return null;
 
-//path3 19in from left corner, 4 inch from front bar 39 inches from ball
-m_drive.resetOdometry(traj31.getInitialPose());
-    return new ParallelCommandGroup(EIntake, ramseteCommand31).andThen(() ->
-    m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
-    .andThen(new ParallelCommandGroup(IntakeR, ramseteCommand32).andThen(() ->
-    m_drive.tankDriveVolts(0, 0))).andThen(ramseteCommand33).andThen(() ->
-    m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
+ return (new ParallelCommandGroup(new StartEndCommand(()->m_drive.arcadeDrive(0,0.4), ()->m_drive.arcadeDrive(0,0), m_drive).withTimeout(1.7), autonVision2));
+//2ball path 3
+// m_drive.resetOdometry(traj31.getInitialPose());
+// return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() ->
+//     m_drive.tankDriveVolts(0, 0)).andThen(autonVision);
 
-      //New Path #1 using pathplanner
+
+//path3 19in from left corner, 4 inch from front bar 39 inches from ball
+// m_drive.resetOdometry(traj31.getInitialPose());
+// return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() ->  
+//     m_drive.tankDriveVolts(0, 0)).andThen(autonVision)
+//     .andThen(new ParallelCommandGroup(n2intake, ramseteCommand32).andThen(() ->
+//     m_drive.tankDriveVolts(0, 0)))
+//     .andThen(new ParallelCommandGroup(n3intake, ramseteCommand33)).andThen(() ->
+//     m_drive.tankDriveVolts(0, 0)).andThen(new ParallelCommandGroup(new StartEndCommand(()->m_drive.arcadeDrive(0,0.5), ()->m_drive.arcadeDrive(0,0), m_drive).withTimeout(2), autonVision2));
+    
+// return autonVision;
+
+
+
+  
+  // return m_chooser.getSelected();
+    
+
+
+
+
+
+
+
+
+      //New Path #1 using pathplanner, starts in tarmac near acute angle: 5 ball auton
       // m_drive.resetOdometry(aPath11.getTrajectory().getInitialPose());
       // return new ParallelCommandGroup(new ExtendIntake(this), aPath11.getRameseteCommand(m_drive))
       //   .andThen(()->m_drive.tankDriveVolts(0,0))
@@ -375,7 +473,7 @@ m_drive.resetOdometry(traj31.getInitialPose());
       //   .andThen(new VisionAuto(this))
       // ;
 
-      //New Path #2 using pathplanner
+      //New Path #2 using pathplanner, starts in tarmac near obtuse angle: 5 ball auton
       // m_drive.resetOdometry(aPath21.getTrajectory().getInitialPose());
       // return new ParallelCommandGroup(new ExtendIntake(this), aPath21.getRameseteCommand(m_drive))
       //   .andThen(()->m_drive.tankDriveVolts(0,0))
@@ -389,7 +487,7 @@ m_drive.resetOdometry(traj31.getInitialPose());
       //   .andThen(new VisionAuto(this))
       // ;
 
-      //New Path #3 using pathplanner
+      //New Path #3 using pathplanner, starts in tarmac near obtuse angle, but more towards center: 4 ball auton
       // m_drive.resetOdometry(aPath31.getTrajectory().getInitialPose());
       // return new ParallelCommandGroup(new ExtendIntake(this), aPath31.getRameseteCommand(m_drive))
       //     .andThen(()->m_drive.tankDriveVolts(0,0))
@@ -399,6 +497,16 @@ m_drive.resetOdometry(traj31.getInitialPose());
       //     .andThen(aPath33.getRameseteCommand(m_drive))
       //     .andThen(new VisionAuto(this))
       // ;
+
+      //New Path #3 using pathplanner, starts in tarmac near obtuse angle, but more towards center: 4 ball auton
+      // m_drive.resetOdometry(aPath41.getTrajectory().getInitialPose());
+      // return new ParallelCommandGroup(new ExtendIntake(this), aPath41.getRameseteCommand(m_drive))
+      //     .andThen(()->m_drive.tankDriveVolts(0,0))
+      //     .andThen(new VisionAuto(this))
+      //     .andThen(aPath42.getRameseteCommand(m_drive))
+      //     .andThen(new OutTakeCommand(this));
+
+      
 
 
    //test
