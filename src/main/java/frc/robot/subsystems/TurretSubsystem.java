@@ -21,17 +21,23 @@ public class TurretSubsystem extends SubsystemBase {
     //2048 units per revolution
     //9:1 for speed
     public void setTurret(double speed){
-        // if(getTurretRot()<=0&&speed<0){
-        //     turretMotor.set(0);
+        // if(getTurretRot()<=4&&speed<0){
+        //     turretMotor.setVoltage(0);
         // }else if(getTurretRot()>=4&&speed>0){
-        //     turretMotor.set(0);
+        //     turretMotor.setVoltage(0);
         // }else{
             turretMotor.set(speed);
         // }
         
     }
     public void setTurretVolt(double volt){
-        turretMotor.setVoltage(volt);
+        if(getTurretRot()<-6){
+            turretMotor.setVoltage(0);
+        }else if(getTurretRot()>7){
+            turretMotor.setVoltage(0);
+        }else{
+            turretMotor.setVoltage(volt);
+        }
     }
     public void stopTurret(){
         turretMotor.set(0);

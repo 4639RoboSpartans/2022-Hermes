@@ -42,9 +42,9 @@ public final class Constants {
 	public static boolean moveshoot=false;
 
 	//Subject to change
-	public static final double ksVolts=0.69874;//0.66099;
-	public static final double kvVoltSecondsPerMeter = 0.012955;//0.026728;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0028624;//0.0028603;
+	public static final double ksVolts=0.65019;//0.69874;//0.66099;
+	public static final double kvVoltSecondsPerMeter = 0.013915;//0.012955;//0.026728;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0033668;//0.0028624;//0.0028603;
 	public static final double kPDriveVel = 0.12992;
 	//Subject to change
 

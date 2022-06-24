@@ -7,25 +7,27 @@ import frc.robot.subsystems.TurretSubsystem;
 public class TurretCommandR extends CommandBase{
     public TurretSubsystem m_turret;
     public ShroudSubsystem m_shroud;
-    public TurretCommandR(TurretSubsystem m_turret, ShroudSubsystem m_shroud){
-        this.m_shroud = m_shroud;
+    public TurretCommandR(TurretSubsystem m_turret){
         this.m_turret = m_turret;
-        addRequirements(m_turret, m_shroud);
+        addRequirements(m_turret);
     }
     @Override
     public void initialize(){
         m_turret.setTurret(0);
-        m_shroud.setShroud(0);
     }
     @Override
     public void execute(){
-        // m_turret.setTurret(-0.2);
-        m_shroud.setShroud(-0.4);
+        m_turret.setTurretVolt(-5);
+        // m_shroud.setShroud(-0.4);
+
     }
     @Override
     public void end(boolean en){
         m_turret.setTurret(0);
-        m_shroud.setShroud(0);
     }
 
+    @Override
+    public boolean isFinished(){
+        return false;
+    }
 }
