@@ -10,7 +10,7 @@ import frc.robot.Constants;
 
 public class TurretSubsystem extends SubsystemBase {
     public WPI_TalonFX turretMotor = new WPI_TalonFX(Constants.TurretMotor);
-    public PIDController turretPID = new PIDController(0.035, 0.0002, 0);
+    public PIDController turretPID = new PIDController(0.05, 0.0002, 0);
     public TurretSubsystem(){
         turretMotor.configFactoryDefault();
         turretMotor.setNeutralMode(NeutralMode.Brake);
@@ -31,11 +31,12 @@ public class TurretSubsystem extends SubsystemBase {
         
     }
     public void setTurretVolt(double volt){
-        if(getTurretRot()<-6){
-            turretMotor.setVoltage(0);
-        }else if(getTurretRot()>7){
-            turretMotor.setVoltage(0);
-        }else{
+        // if(getTurretRot()<-6){
+        //     turretMotor.setVoltage(0);
+        // }else if(getTurretRot()>7){
+        //     turretMotor.setVoltage(0);
+        // }else
+        {
             turretMotor.setVoltage(volt);
         }
     }

@@ -28,9 +28,9 @@ public class OI {
 		sticks = new Joystick[NUMBER_OF_CONTROLLERS];
 
 		for (int i = 0; i < NUMBER_OF_CONTROLLERS; i++) {
-			sticks[i] = new Joystick(i);
+			Joystick stick = sticks[i] = new Joystick(i);
 			for (int j = 0; j < buttons[i].length; j++) {
-				buttons[i][j] = new JoystickButton(sticks[i], j);
+				buttons[i][j] = new JoystickButton(stick, j);
 			}
 		}
 

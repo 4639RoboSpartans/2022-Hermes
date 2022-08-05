@@ -6,14 +6,20 @@ import frc.robot.OI;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
+import static frc.robot.Constants.Axes;
+
 public class DriveCommand extends CommandBase {
+
     private DriveSubsystem m_drive;
     private OI oi;
+
     private final SlewRateLimiter speedLimiter = new SlewRateLimiter(12);//8
 	private final SlewRateLimiter rotationLimiter = new SlewRateLimiter(5);
+
     public DriveCommand(DriveSubsystem m_drive, OI oi) {
         this.m_drive = m_drive;
         this.oi = oi;
+        
         addRequirements(m_drive);
     }
 
@@ -28,9 +34,10 @@ public class DriveCommand extends CommandBase {
         Constants.leftRate = m_drive.getLeftEncoderRate();
         Constants.rightRate = m_drive.getRightEncoderRate();
         
-        m_drive.arcadeDrive(speedLimiter.calculate(-oi.getAxis(0, Constants.Axes.LEFT_STICK_Y))*0.65,//0.65
-				rotationLimiter.calculate(-oi.getAxis(0, Constants.Axes.RIGHT_STICK_X) )
-						* Constants.ROTATION_SENSITIVITY);
+        m_drive.arcadeDrive(
+            speedLimiter.calculate(-oi.getAxis(0, Axes.LEFT_STICK_Y)) *Constants.ROTATION_SENSITIVITY,
+			rotationLimiter.calculate(-oi.getAxis(0, Axes.RIGHT_STICK_X))
+						* Constants.DRIVE_SPEED);
     }
 
     // Called once the command ends or is interrupted.

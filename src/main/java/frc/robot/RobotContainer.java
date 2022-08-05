@@ -181,6 +181,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    
     m_drive.setDefaultCommand(drive);
     m_LL.setDefaultCommand(LL);
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() -> m_intake.extendPistons(), m_intake));
@@ -212,11 +213,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-
-    if(2 * 2 == 4){
-      return null;
-    }
-
+      
+    
     RamseteCommand ramseteCommand11 = new RamseteCommand(
         traj11,
         m_drive::getPose,
@@ -417,7 +415,8 @@ public class RobotContainer {
           .andThen(ramseteCommand23)
           .andThen(() -> m_drive.tankDriveVolts(0, 0)).andThen(autonVision2);
     }
-
+    
+    //return null;
     // return new ParallelCommandGroup(new
     // StartEndCommand(()->m_drive.arcadeDrive(0,0.4), ()->m_drive.arcadeDrive(0,0),
     // m_drive).withTimeout(1.7), autonVision2);
@@ -442,10 +441,10 @@ public class RobotContainer {
     // path3
     // return null;
 
-    return (new ParallelCommandGroup(
-        new StartEndCommand(() -> m_drive.arcadeDrive(0, 0.4), () -> m_drive.arcadeDrive(0, 0), m_drive)
-            .withTimeout(1.7),
-        autonVision2));
+    // return (new ParallelCommandGroup(
+    //     new StartEndCommand(() -> m_drive.arcadeDrive(0, 0.4), () -> m_drive.arcadeDrive(0, 0), m_drive)
+    //         .withTimeout(1.7),
+    //     autonVision2));
     // return null;
     // 2ball path 3
     // m_drive.resetOdometry(traj31.getInitialPose());
@@ -465,24 +464,25 @@ public class RobotContainer {
 
     // return autonVision;
 
-    // return m_chooser.getSelected();
-
     // New Path #1 using pathplanner, starts in tarmac near acute angle: 5 ball
     // auton
     // m_drive.resetOdometry(aPath11.getTrajectory().getInitialPose());
     // return new ParallelCommandGroup(new ExtendIntake(this),
-    // aPath11.getRameseteCommand(m_drive))
-    // .andThen(()->m_drive.tankDriveVolts(0,0))
-    // .andThen(new VisionAuto(this))
-    // .andThen(new ParallelCommandGroup(new IntakeRetract(this),
-    // aPath12.getRameseteCommand(m_drive)))
-    // .andThen(()->m_drive.tankDriveVolts(0,0))
-    // .andThen(aPath13.getRameseteCommand(m_drive))
-    // .andThen(()->m_drive.tankDriveVolts(0,0))
-    // .andThen(new VisionAuto(this))
-    // .andThen(new ExtendIntake(this))
-    // .andThen(new VisionAuto(this))
-    // ;
+    //     aPath11.getRameseteCommand(m_drive))
+    //     .andThen(()->m_drive.tankDriveVolts(0,0))
+    //     .andThen(new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper,
+    //     m_intake, false, 2))
+    //     .andThen(new ParallelCommandGroup(new IntakeRetract(this),
+    //     aPath12.getRameseteCommand(m_drive)))
+    //     .andThen(()->m_drive.tankDriveVolts(0,0))
+    //     .andThen(aPath13.getRameseteCommand(m_drive))
+    //     .andThen(()->m_drive.tankDriveVolts(0,0))
+    //     .andThen(new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper,
+    //     m_intake, false, 4))
+    //     .andThen(new ExtendIntake(this))
+    //     .andThen(new VisionAuto(m_LL, m_turret, m_shroud, m_shooter, m_oi, m_feeder, m_hopper,
+    //     m_intake, false, 5))
+    ;
 
     // New Path #2 using pathplanner, starts in tarmac near obtuse angle: 5 ball
     // auton
@@ -527,6 +527,7 @@ public class RobotContainer {
 
     // test
     // return ramseteCommand11;
+    return null;
   }
 }
 

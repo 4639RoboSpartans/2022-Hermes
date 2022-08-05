@@ -63,7 +63,8 @@ public static boolean turning = true;
     public static final double DEADZONE_VALUE = 0.01;
 	public static final int NUMBER_OF_CONTROLLERS = 2;
 
-	public static final double ROTATION_SENSITIVITY = 0.85;//0.75
+	public static final double DRIVE_SPEED = 0.85; //0.85;
+	public static final double ROTATION_SENSITIVITY = 0.65; //0.85;
     
     public enum Axes {
 		LEFT_STICK_X(0), LEFT_STICK_Y(4), LEFT_TRIGGER(2), RIGHT_TRIGGER(3), RIGHT_STICK_X(1), RIGHT_STICK_Y(5);
