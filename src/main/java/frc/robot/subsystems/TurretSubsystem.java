@@ -1,20 +1,28 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.MotorCommutation;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.fasterxml.jackson.databind.AnnotationIntrospector.ReferenceProperty.Type;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class TurretSubsystem extends SubsystemBase {
-    public WPI_TalonFX turretMotor = new WPI_TalonFX(Constants.TurretMotor);
-    public PIDController turretPID = new PIDController(0.05, 0.0002, 0);
+    public CANSparkMax turretMotor = new CANSparkMax(Constants.TurretMotor, MotorType.kBrushless);
+    public PIDController turretPID = new PIDController(
+        // 0.05, 0.0002, 0
+        .10, .0004, 0
+    );
+    public RelativeEncoder m_enc = turretMotor.getAlternateEncoder(4096);
     public TurretSubsystem(){
-        turretMotor.configFactoryDefault();
-        turretMotor.setNeutralMode(NeutralMode.Brake);
-        turretMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+
 
     }
     //10 tooth motor to 140 tooth
@@ -45,7 +53,7 @@ public class TurretSubsystem extends SubsystemBase {
     }
     //range of 49,000
     public double getTurretRot(){
-        double deg = turretMotor.getSelectedSensorPosition();
+        double deg = m_enc.getPosition();
         deg /=2048;
         deg*=9;
         deg/=14;
@@ -53,7 +61,7 @@ public class TurretSubsystem extends SubsystemBase {
         return deg;
     }
     public double getTurretRotRate(){
-        return turretMotor.getSelectedSensorVelocity();
+        return m_enc.getPosition();
     }
     public void TurretClimbing(){
         setTurret(-turretPID.calculate(getTurretRot(),0));

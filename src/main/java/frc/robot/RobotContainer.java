@@ -114,8 +114,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     m_chooser.setDefaultOption("Climber5", "3L");
-    m_chooser.addOption("Climber2", "3S");
     m_chooser.addOption("Climber4", "3M");
+    m_chooser.addOption("Climber2", "3S");
     m_chooser.addOption("Middle4", "2M");
     m_chooser.addOption("Middle2", "2S");
     SmartDashboard.putData(m_chooser);
@@ -213,7 +213,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-      
+      // 1: C5, 2: C4, 3: C2, 4: M4, 5: M2
+      int num = 0;
+      String chosenAuton = (new String[]{"NONE", "3L", "3M", "3S", "2M", "2S"})[num];
     
     RamseteCommand ramseteCommand11 = new RamseteCommand(
         traj11,
@@ -379,7 +381,7 @@ public class RobotContainer {
         m_drive::tankDriveVolts,
         m_drive);
 
-    if (m_chooser.getSelected().equals("3L")) {
+    if (chosenAuton.equals("3L")) {
       m_drive.resetOdometry(traj31.getInitialPose());
       return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() -> m_drive.tankDriveVolts(0, 0))
           .andThen(autonVision)
@@ -389,22 +391,22 @@ public class RobotContainer {
               new StartEndCommand(() -> m_drive.arcadeDrive(0, 0.4), () -> m_drive.arcadeDrive(0, 0), m_drive)
                   .withTimeout(1.7),
               autonVision2));
-    } else if (m_chooser.getSelected().equals("3S")) {
+    } else if (chosenAuton.equals("3S")) {
       m_drive.resetOdometry(traj31.getInitialPose());
       return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() -> m_drive.tankDriveVolts(0, 0))
           .andThen(autonVision);
-    } else if (m_chooser.getSelected().equals("3M")) {
+    } else if (chosenAuton.equals("3M")) {
       m_drive.resetOdometry(traj31.getInitialPose());
       return new ParallelCommandGroup(nintake, ramseteCommand31).andThen(() -> m_drive.tankDriveVolts(0, 0))
           .andThen(autonVision)
           .andThen(new ParallelCommandGroup(n2intake, ramseteCommand32).andThen(() -> m_drive.tankDriveVolts(0, 0)))
           .andThen(ramseteCommand34).andThen(autonVision2);
-    } else if (m_chooser.getSelected().equals("2S")) {
+    } else if (chosenAuton.equals("2S")) {
       nintake = new NIntake(m_intake, m_hopper, 2.5, 0);
       m_drive.resetOdometry(traj21.getInitialPose());
       return new ParallelCommandGroup(nintake, ramseteCommand21).andThen(() -> m_drive.tankDriveVolts(0, 0))
           .andThen(autonVision);
-    } else if (m_chooser.getSelected().equals("2M")) {
+    } else if (chosenAuton.equals("2M")) {
       nintake = new NIntake(m_intake, m_hopper, 2.5, 0);
       n2intake = new NIntake(m_intake, m_hopper, 4, 0);
       m_drive.resetOdometry(traj21.getInitialPose());

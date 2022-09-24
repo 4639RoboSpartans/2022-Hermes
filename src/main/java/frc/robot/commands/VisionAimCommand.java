@@ -39,7 +39,7 @@ public class VisionAimCommand extends CommandBase {
     double limelightMountAngleDegrees = 25.0;
     double limelightLensHeightInches = 35;
     double goalHeightInches = 104.0;
-    PIDController PIDVTurret = new PIDController(0.4, 0.5, 0);//.035
+    PIDController PIDVTurret = new PIDController(0.5, 0.6, 0);//.035
     PIDController PIDVShroud = new PIDController(0.005 , 0.014, 0.0000);// 0.0015, 0.012
 
     private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.7591 , 0.13571, 0.035856);//new
@@ -91,7 +91,7 @@ public class VisionAimCommand extends CommandBase {
         distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         // }
         SmartDashboard.putNumber("Distance From Target", distanceFromLimelightToGoalInches);
-        desiredPosition= -0.0017329*Math.pow(distanceFromLimelightToGoalInches,2) + 0.94794 * distanceFromLimelightToGoalInches - 71.561;
+        desiredPosition= -0.0016*Math.pow(distanceFromLimelightToGoalInches,2) + 1.4015 * distanceFromLimelightToGoalInches - 56.561;
         
     
         
@@ -219,7 +219,13 @@ public class VisionAimCommand extends CommandBase {
                 //     sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed+5)+ (feedforward.calculate(desiredSpeed+5)*1.00/12);
                 // }else{
                     //#endregion
-                desiredSpeed = Math.min(40,-0.000214*Math.pow(distanceFromLimelightToGoalInches, 2) + 0.1517*distanceFromLimelightToGoalInches+ 12.533);
+                if(distanceFromLimelightToGoalInches<150){
+                desiredSpeed = Math.min(40,-0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) + 0.1517*distanceFromLimelightToGoalInches+ 11.7);
+                }else if(distanceFromLimelightToGoalInches<280){
+                    desiredSpeed = Math.min(40,-0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) + 0.1517*distanceFromLimelightToGoalInches+ 8.5);
+                }else{
+                    desiredSpeed = Math.min(40,-0.0001*Math.pow(distanceFromLimelightToGoalInches, 2) + 0.1517*distanceFromLimelightToGoalInches+ 6);
+                }
                 // desiredSpeed = 39;
                 sped = shooterBang.calculate(m_shooter.getRate(), desiredSpeed)+ (feedforward.calculate(desiredSpeed)*1.00/12);
                 SmartDashboard.putNumber("calculated sped", sped);

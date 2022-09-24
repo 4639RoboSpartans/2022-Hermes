@@ -46,8 +46,9 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Coast);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Coast);
     m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Coast);
-    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
+    // m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
   }
+
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -58,6 +59,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Turret Encoder", m_robotContainer.m_turret.getTurretRot());
     // SmartDashboard.putNumber("leftside", Constants.leftRate);
     // SmartDashboard.putNumber("rightside", Constants.rightRate);
     // SmartDashboard.putBoolean("MovingShoot", Constants.moveshoot);
@@ -82,7 +84,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Coast);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Coast);
     m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Coast);
-    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
+    // m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Coast);
   }
 
   @Override
@@ -98,7 +100,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Brake);
-    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
+    // m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
     // schedule the autonomous command (example)
     m_robotContainer.m_shroud.resetEncoder();
     if (m_autonomousCommand != null) {
@@ -118,7 +120,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.BackLeft.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontRight.setNeutralMode(NeutralMode.Brake);
     m_robotContainer.m_drive.FrontLeft.setNeutralMode(NeutralMode.Brake);
-    m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
+    // m_robotContainer.m_turret.turretMotor.setNeutralMode(NeutralMode.Brake);
     Constants.climbing = false;
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -134,6 +136,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
     // SmartDashboard.putNumber("leftEncoder", m_robotContainer.m_drive.getLeftEncoderPosition());
     // SmartDashboard.putNumber("rightEncoder", m_robotContainer.m_drive.getRightEncoderPosition());
     // SmartDashboard.putNumber("X displacement", m_robotContainer.m_drive.getNavx().getDisplacementX());

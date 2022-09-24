@@ -34,6 +34,7 @@ public class DriveCommand extends CommandBase {
         Constants.leftRate = m_drive.getLeftEncoderRate();
         Constants.rightRate = m_drive.getRightEncoderRate();
         
+        
         m_drive.arcadeDrive(
             speedLimiter.calculate(-oi.getAxis(0, Axes.LEFT_STICK_Y)) *Constants.ROTATION_SENSITIVITY,
 			rotationLimiter.calculate(-oi.getAxis(0, Axes.RIGHT_STICK_X))
