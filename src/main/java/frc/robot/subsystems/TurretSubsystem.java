@@ -22,8 +22,7 @@ public class TurretSubsystem extends SubsystemBase {
     );
     public RelativeEncoder m_enc = turretMotor.getAlternateEncoder(4096);
     public TurretSubsystem(){
-
-
+        
     }
     //10 tooth motor to 140 tooth
     //2048 units per revolution

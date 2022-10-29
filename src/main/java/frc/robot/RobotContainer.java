@@ -184,15 +184,21 @@ public class RobotContainer {
     
     m_drive.setDefaultCommand(drive);
     m_LL.setDefaultCommand(LL);
+
     m_oi.getPovButton(1, 180).whenPressed(new RunCommand(() -> m_intake.extendPistons(), m_intake));
     m_oi.getPovButton(1, 0).whenPressed(new RunCommand(() -> m_intake.retractPistons(), m_intake));
+
     m_oi.getButton(1, Constants.Buttons.X_BUTTON).whileHeld(intake);
     m_oi.getButton(1, Constants.Buttons.A_BUTTON).whileHeld(outtake);
+
     // m_oi.getButton(1,Constants.Buttons.LEFT_BUMPER).whileHeld(turret);
     // m_oi.getButton(1,Constants.Buttons.RIGHT_BUMPER).whileHeld(turret1);
     m_oi.getButton(1, Constants.Buttons.RIGHT_BUMPER).whileHeld(LL);
-    m_oi.getPovButton(0, 180).whenPressed(new RunCommand(() -> m_climber.extendPistons(), m_climber));
     m_oi.getPovButton(0, 0).whenPressed(new RunCommand(() -> m_climber.retractPistons(), m_climber));
+    m_oi.getPovButton(0, 180).whenPressed(new RunCommand(() -> m_climber.extendPistons(), m_climber));
+
+    m_oi.getPovButton(1, 90).whenPressed(new TurretCommandL(m_turret));
+    m_oi.getPovButton(1, 270).whenPressed(new TurretCommandR(m_turret));
 
     // m_oi.getButton(1,
     // Constants.Buttons.Y_BUTTON).whileHeld(()->m_climber.extendPistons());
@@ -200,8 +206,7 @@ public class RobotContainer {
     // Constants.Buttons.A_BUTTON).whileHeld(()->m_climber.retractPistons());
 
     m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whileHeld(climberforward);
-    m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER)
-        .whenPressed(new RunCommand(() -> m_shooter.startClimbing(), m_shooter));
+    // m_oi.getButton(0, Constants.Buttons.LEFT_BUMPER).whenPressed(new RunCommand(() -> m_shooter.startClimbing(), m_shooter));
     m_oi.getButton(0, Constants.Buttons.RIGHT_BUMPER).whileHeld(climberbackward);
     m_oi.getButton(0, Constants.Buttons.B_BUTTON).whileHeld(ClimberLF);
     m_oi.getButton(0, Constants.Buttons.Y_BUTTON).whileHeld(ClimberRF);
@@ -214,7 +219,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
       // 1: C5, 2: C4, 3: C2, 4: M4, 5: M2
-      int num = 0;
+      int num = 4;
       String chosenAuton = (new String[]{"NONE", "3L", "3M", "3S", "2M", "2S"})[num];
     
     RamseteCommand ramseteCommand11 = new RamseteCommand(
